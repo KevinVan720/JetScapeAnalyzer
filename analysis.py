@@ -87,6 +87,7 @@ class AnalysisBase:
                     rst[pT] += self.countStorage[pThat][pT]*self.pThatEventCrossSections[pThat]/normalizeFactor
                     err[pT] += self.countStorage[pThat][pT]*self.pThatEventCrossSections[pThat]**2/normalizeFactor**2
 
+        err=[np.sqrt(x) for x in err]
         ptBinsAvg = (np.array(self.pTBins[0:-1])+np.array(self.pTBins[1:]))/2
         np.savetxt(self.outputFileName, np.transpose([ptBinsAvg, rst, err]))
 
