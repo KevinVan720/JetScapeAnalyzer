@@ -1,6 +1,7 @@
 import numpy as np
 import h5py
 import random
+import fastjet as fj
 
 def weighted_avg_and_std(values, weights):
     """
@@ -22,7 +23,8 @@ class JetScapeReader:
         self.currentHydroInfo = []
         self.hadronList = []
 
-    def readEventHeader(self, strlist):
+    def readEventHeader(self, strlist): 
+        assert(len(strlist)==25)
         self.currentCrossSection = float(strlist[6].strip())
         self.currentHydroInfo = [float(a.strip()) for a in strlist[8::2]]
         self.currentEventCount += 1
@@ -41,6 +43,7 @@ class JetScapeReader:
                     self.hadronList = []
 
                 else:
+                    assert(len(strlist)==8)
                     i, pid, status, E, px, py, pz, eta, phi = [
                         float(a.strip()) for a in strlist
                     ]
@@ -68,6 +71,8 @@ class AnalysisBase:
         self.pThatEventCounts[self.pThatIndex]+=1
         for particle in particles:
             pid, E, px, py, pz, eta, phi = particle
+            #y = 0.5 * np.log((abs(E + pz) + 0.0000001) / (abs(E - pz) + 0.0000001))
+            #eta=y
             if pid in self.ids and (eta >= self.rapidityCut[0] and eta <= self.rapidityCut[1]):
                 pT = np.sqrt(px ** 2 + py ** 2)
 
@@ -77,6 +82,7 @@ class AnalysisBase:
 
     def outputResult(self):
         if np.sum(self.pThatEventCounts)==0 : return
+
         rst = [0 for j in range(len(self.pTBins)-1)]
         err = [0 for j in range(len(self.pTBins)-1)]
         for pThat in range(len(self.pThatBins)-1):
@@ -86,6 +92,10 @@ class AnalysisBase:
                         self.pTBins[pT+1]-self.pTBins[pT])*(self.pTBins[pT+1]+self.pTBins[pT])/2*(self.rapidityCut[1]-self.rapidityCut[0])
                     rst[pT] += self.countStorage[pThat][pT]*self.pThatEventCrossSections[pThat]/normalizeFactor
                     err[pT] += self.countStorage[pThat][pT]*self.pThatEventCrossSections[pThat]**2/normalizeFactor**2
+        
+        print(self.pThatEventCounts)
+        print(self.pThatEventCrossSections)
+        print(rst)
 
         err=[np.sqrt(x) for x in err]
         ptBinsAvg = (np.array(self.pTBins[0:-1])+np.array(self.pTBins[1:]))/2
@@ -134,6 +144,7 @@ class FlowAnalysis(AnalysisBase):
 
     def outputResult(self):
         if np.sum(self.pThatEventCounts)==0 : return
+        
         v2_ch_rms = np.sqrt(np.mean(np.array(self.allHydros)[:, 3] ** 2))
         v2_all = [[] for j in range(len(self.pTBins)-1)]
         rst = [0 for j in range(len(self.pTBins)-1)]
@@ -162,7 +173,7 @@ class FlowAnalysis(AnalysisBase):
                 )
                 psi_temp= 0.5 * \
                     np.arctan2(temp_Q2_Im, temp_Q2_Re)
-                weight = temp_Q0*self.allHydros[hydroId][2]
+                weight = temp_Q0*self.allHydros[hydroId][0]
                 v2_ch = self.allHydros[hydroId][3]
                 psi_ch = self.allHydros[hydroId][4]
     

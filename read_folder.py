@@ -14,15 +14,16 @@ from analysis import FlowAnalysis
 from analysis import JetScapeReader
 import random
 
+
 def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
-    pThatPair = [2, 3, 4, 5, 7, 9, 11, 13, 15, 17, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230,
-                 240, 250, 260, 270, 280, 290, 300, 350, 400, 450, 500, 550, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2200, 2400]
+    pThatPair = [1, 2, 3, 4, 5, 7, 9, 11, 13, 15, 17, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230,
+                 240, 250, 260, 270, 280, 290, 300, 350, 400, 450, 500, 550, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2200, 2400, 2510]
     pThat_Min = pThatPair[:-1]
     pThat_Max = pThatPair[1:]
 
     allAnalysis = [
         AnalysisBase(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100, 200, 300, 500],
-                     ids=[211, -211, 213, -213, 321, -321, 2212, -2212], rapidityCut=[-1, 1], outputFileName=outputDir+"/ch_yield_"+"%06d" % random.randint(0, 999999)+".txt"),
+                     ids=[211, -211, 213, -213, 321, -321, 2212, -2212, 3222, -3222, 3112, -3112, 3312, -3312, 3334, -3334], rapidityCut=[-1, 1], outputFileName=outputDir+"/ch_yield_"+"%06d" % random.randint(0, 999999)+".txt"),
         AnalysisBase(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
                      ids=[421, -421], rapidityCut=[-1, 1], outputFileName=outputDir+"/D0_yield_"+"%06d" % random.randint(0, 999999)+".txt"),
         FlowAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 15, 20, 40],
@@ -51,6 +52,7 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
 
     for analysis in allAnalysis:
         analysis.outputResult()
+
 
 if __name__ == "__main__":
 
