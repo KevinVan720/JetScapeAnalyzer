@@ -9,10 +9,11 @@ from joblib import Parallel, delayed
 import re
 from itertools import groupby
 import math
-from analysis import AnalysisBase
+import random
+from analysis import pTYieldAnalysis
 from analysis import FlowAnalysis
 from analysis import JetScapeReader
-import random
+from analysis import InclusiveJetpTYieldAnalysis
 
 
 def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
@@ -22,10 +23,14 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
     pThat_Max = pThatPair[1:]
 
     allAnalysis = [
-        AnalysisBase(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100, 200, 300, 500],
-                     ids=[211, -211, 213, -213, 321, -321, 2212, -2212, 3222, -3222, 3112, -3112, 3312, -3312, 3334, -3334], rapidityCut=[-1, 1], outputFileName=outputDir+"/ch_yield_"+"%06d" % random.randint(0, 999999)+".txt"),
-        AnalysisBase(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
-                     ids=[421, -421], rapidityCut=[-1, 1], outputFileName=outputDir+"/D0_yield_"+"%06d" % random.randint(0, 999999)+".txt"),
+        pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100, 200, 300, 500],
+                        ids=[211, -211, 213, -213, 321, -321, 2212, -2212, 3222, -3222, 3112, -3112, 3312, -3312, 3334, -3334], rapidityCut=[-1, 1], outputFileName=outputDir+"/ch_yield_"+"%06d" % random.randint(0, 999999)+".txt"),
+        pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
+                        ids=[421, -421], rapidityCut=[-1, 1], outputFileName=outputDir+"/D0_yield_"+"%06d" % random.randint(0, 999999)+".txt"),
+        InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
+                                    rapidityCut=[-1, 1],
+                                    jetRadius=0.3, jetpTMin=1, jetRapidityCut=[-2, 2],
+                                    outputFileName=outputDir+"/inclusiveJet_yield_"+"%06d" % random.randint(0, 999999)+".txt"),
         FlowAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 15, 20, 40],
                      ids=[411, -411, 421, -421, 413, -413, 423, -423], rapidityCut=[-1, 1], outputFileName=outputDir+"/D0_v2_"+"%06d" % random.randint(0, 999999)+".txt"),
     ]
@@ -47,8 +52,15 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
                 reader = JetScapeReader(inputDir+fileName)
                 for hadrons in reader.readAllEvents():
                     for analysis in allAnalysis:
+
                         analysis.setStatus(pThatIndex, reader)
-                        analysis.addEvent(hadrons)
+                        CSFile = [file for file in os.listdir(inputDir) if fnmatch.fnmatch(
+                            file, "Xsection_*"+pThatString+"*.dat")]
+                        if len(CSFile) > 0:
+                            sigma = np.loadtxt(inputDir+CSFile[0])[0]
+                            analysis.setCrossSection(pThatIndex, sigma)
+
+                        analysis.analyzeEvent(hadrons)
 
     for analysis in allAnalysis:
         analysis.outputResult()
@@ -58,6 +70,7 @@ if __name__ == "__main__":
 
     inputDir = sys.argv[1]
     outputDir = sys.argv[2]
+    batchIndex = int(sys.argv[3])
 
     num_cores = multiprocessing.cpu_count()
 
@@ -75,4 +88,4 @@ if __name__ == "__main__":
 
     # this is the main program, process all the pThatBin files in parallel
     processed_list = Parallel(n_jobs=num_cores)(
-        delayed(doAnalysisOnBatch)(i, i+1) for i in range(0, 9))
+        delayed(doAnalysisOnBatch)(i, i+1) for i in range(batchIndex+0, batchIndex+9))
