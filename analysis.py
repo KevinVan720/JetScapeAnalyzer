@@ -1,9 +1,13 @@
 import numpy as np
 import h5py
 import random
+import os
+import sys
+import fnmatch
+import re
+from itertools import groupby
 import fastjet as fj
 import fjext
-
 
 def weighted_avg_and_std(values, weights):
     """
@@ -16,6 +20,22 @@ def weighted_avg_and_std(values, weights):
     variance = np.average((values-average)**2, weights=weights)
     Neffective = np.sum(weights)**2/np.sum(weights**2)
     return (average, np.sqrt(variance/(Neffective-1)))
+
+def strNotContain(name):
+    noNames = ["File", "pThat", "Count",
+                   "Bins", "jetDefinition", "jetSelector", "Q0", "Q2", "Hydro"]
+    for n in noNames:
+        if n.upper() in name.upper() or n.lower() in name.lower():
+            return False
+    return True
+
+
+def findIndex(valList, val):
+    assert(len(valList) >= 2)
+    for i in range(len(valList)-1):
+        if val > valList[i] and val < valList[i+1]:
+            return i
+    return -1
 
 
 def withinInterval(y, interval):
@@ -58,11 +78,12 @@ class JetScapeReader:
         currently only support a single header format
         with event cross section and hydro flow information
         '''
-        assert(len(strlist) == 25)
-
-        self.currentCrossSection = float(strlist[6].strip())
-        self.currentHydroInfo = [float(a.strip()) for a in strlist[8::2]]
-        self.currentEventCount += 1
+        if len(strlist) == 25:
+            assert(
+                "sigmaGen" in strlist and "Ncoll" in strlist and "v_2" in strlist and "psi_2" in strlist)
+            self.currentCrossSection = float(strlist[6].strip())
+            self.currentHydroInfo = [float(a.strip()) for a in strlist[8::2]]
+            self.currentEventCount += 1
 
     def readAllEvents(self):
         with open(self.fileName) as f:
@@ -95,6 +116,16 @@ class JetScapeReader:
                         print("Unknown particle length")
 
 
+def getCrossSectionFromFile(inputDir, fileName):
+    CSFile = [file for file in os.listdir(inputDir) if fnmatch.fnmatch(
+        file, fileName)]
+    if len(CSFile) > 0:
+        sigma = np.loadtxt(inputDir+CSFile[0])[0]
+        return sigma
+    else:
+        raise FileNotFoundError()
+
+
 '''
 Assumption: 
 1.the simulation is setup with many pThatBins and we want to combine them in the analysis
@@ -103,8 +134,9 @@ Assumption:
 
 
 class AnalysisBase:
-    def __init__(self, pThatBins=[], ids=[], status=[],  outputFileName=""):
-        self.outputFileName = outputFileName
+    def __init__(self, pThatBins=[], ids=[], status=[], outputFileName=""):
+        self.outputFileName = outputFileName + \
+            "_%04d" % random.randint(0, 9999)+hash(type(self).__name__)%1000+".txt"
 
         self.ids = ids
         self.status = status
@@ -118,7 +150,7 @@ class AnalysisBase:
 
     def setCrossSection(self, pThatIndex, CS):
         self.pThatIndex = pThatIndex
-        self.pThatEventCrossSections[self.pThatIndex]=CS
+        self.pThatEventCrossSections[self.pThatIndex] = CS
 
     def setStatus(self, pThatIndex, reader):
         self.pThatIndex = pThatIndex
@@ -126,12 +158,19 @@ class AnalysisBase:
     def analyzeEvent(self, particles):
         raise NotImplementedError()
 
+    def outputHeader(self):
+        rst = ""
+        for (name, val) in vars(self).items():
+            if strNotContain(name):
+                rst += name+" "+str(val)+"\n"
+        return rst
+
     def outputResult(self):
         raise NotImplementedError()
 
 
 class JetAnalysisBase(AnalysisBase):
-    def __init__(self, jetRadius=0.4, jetpTMin=1, jetRapidityCut=[-2, 2], jetEtaCut=None, **kwargs):
+    def __init__(self, jetRadius=0.4, jetpTMin=1, jetRapidityCut=None, jetEtaCut=None, **kwargs):
         super(JetAnalysisBase, self).__init__(**kwargs)
         self.clusterPower = -1
         self.jetRadius = jetRadius
@@ -160,16 +199,19 @@ class JetAnalysisBase(AnalysisBase):
 
         # Create a vector of fastjet::PseudoJets from arrays of px,py,pz,e
         fj_particles = fjext.vectorize_px_py_pz_e(px, py, pz, e)
+        for i in range(len(fj_particles)):
+            fj_particles[i].set_user_index(int(hadrons[i].pid))
 
         return fj_particles
 
 
 class pTYieldAnalysis(AnalysisBase):
-    def __init__(self, pTBins=[], rapidityCut=[-2, 2], etaCut=None, **kwargs):
+    def __init__(self, pTBins=[], pTMin=0.01, rapidityCut=[-2, 2], etaCut=None, **kwargs):
         super(pTYieldAnalysis, self).__init__(**kwargs)
         self.pTBins = pTBins
         self.NpTBins = len(self.pTBins)-1
 
+        self.pTMin = pTMin
         self.rapidityCut = rapidityCut
         self.etaCut = etaCut
         self.countStorage = [
@@ -181,12 +223,13 @@ class pTYieldAnalysis(AnalysisBase):
 
     def analyzeEvent(self, particles):
         self.pThatEventCounts[self.pThatIndex] += 1
+        particles = [p for p in particles if p.pT > self.pTMin and withinInterval(
+            p.eta, self.etaCut) and withinInterval(p.y, self.rapidityCut)]
         for p in particles:
-            if p.pid in self.ids and withinInterval(p.eta, self.etaCut) and withinInterval(p.y, self.rapidityCut):
-
-                for i in range(self.NpTBins):
-                    if p.pT > self.pTBins[i] and p.pT < self.pTBins[i + 1]:
-                        self.countStorage[self.pThatIndex][i] += 1
+            if p.pid in self.ids:
+                i = findIndex(self.pTBins, p.pT)
+                if i >= 0:
+                    self.countStorage[self.pThatIndex][i] += 1
 
     def outputResult(self):
         if np.sum(self.pThatEventCounts) == 0:
@@ -198,7 +241,7 @@ class pTYieldAnalysis(AnalysisBase):
             for pT in range(self.NpTBins):
                 if self.pThatEventCounts[pThat] > 0:
                     normalizeFactor = self.pThatEventCounts[pThat]*(
-                        self.pTBins[pT+1]-self.pTBins[pT])*(self.pTBins[pT+1]+self.pTBins[pT])/2*(self.rapidityCut[1]-self.rapidityCut[0])
+                        self.pTBins[pT+1]-self.pTBins[pT])*(self.pTBins[pT+1]+self.pTBins[pT])
                     rst[pT] += self.countStorage[pThat][pT] * \
                         self.pThatEventCrossSections[pThat]/normalizeFactor
                     err[pT] += self.countStorage[pThat][pT] * \
@@ -207,12 +250,18 @@ class pTYieldAnalysis(AnalysisBase):
 
         err = [np.sqrt(x) for x in err]
         ptBinsAvg = (np.array(self.pTBins[0:-1])+np.array(self.pTBins[1:]))/2
-        np.savetxt(self.outputFileName, np.transpose([ptBinsAvg, rst, err]))
+        np.savetxt(self.outputFileName, np.transpose(
+            [ptBinsAvg, rst, err]), header=self.outputHeader())
 
 
-class InclusiveJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
-    def __init__(self, **kwargs):
-        super(InclusiveJetpTYieldAnalysis, self).__init__(**kwargs)
+class JetShapeAnalysis(JetAnalysisBase):
+    def __init__(self, rBins, **kwargs):
+        super(JetShapeAnalysis, self).__init__(**kwargs)
+        self.rBins = rBins
+        self.NrBins = len(self.rBins)-1
+
+        self.countStorage = [
+            [0 for j in range(len(self.rBins)-1)] for i in range(len(self.pThatBins)-1)]
 
     def analyzeEvent(self, particles):
         self.pThatEventCounts[self.pThatIndex] += 1
@@ -222,9 +271,114 @@ class InclusiveJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
         jets_selected = self.jetSelector(jets)
 
         for jet in jets_selected:
-            for i in range(self.NpTBins):
-                if jet.pt() > self.pTBins[i] and jet.pt() < self.pTBins[i + 1]:
-                    self.countStorage[self.pThatIndex][i] += 1
+            constituents = jet.constituents()
+            for hadron in constituents:
+                dr = np.sqrt((hadron.eta()-jet.eta())**2 +
+                             (hadron.phi()-jet.phi())**2)
+                i = findIndex(self.rBins, dr)
+                if i > 0:
+                    self.countStorage[self.pThatIndex][i] += hadron.pt() / \
+                        jet.pt()
+
+    def outputResult(self):
+        if np.sum(self.pThatEventCounts) == 0:
+            return
+
+        rst = [0 for j in range(self.NrBins)]
+        err = [0 for j in range(self.NrBins)]
+        for pThat in range(self.NpThatBins):
+            for pT in range(self.NrBins):
+                if self.pThatEventCounts[pThat] > 0:
+                    normalizeFactor = self.pThatEventCounts[pThat]
+                    rst[pT] += self.countStorage[pThat][pT] * \
+                        self.pThatEventCrossSections[pThat]/normalizeFactor
+                    err[pT] += self.countStorage[pThat][pT] * \
+                        self.pThatEventCrossSections[pThat]**2 / \
+                        normalizeFactor**2
+
+        err = [np.sqrt(x) for x in err]
+        ptBinsAvg = (np.array(self.rBins[0:-1])+np.array(self.rBins[1:]))/2
+        np.savetxt(self.outputFileName, np.transpose([ptBinsAvg, rst, err]), header=self.outputHeader())
+
+
+class InclusiveJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
+    def __init__(self, **kwargs):
+        super(InclusiveJetpTYieldAnalysis, self).__init__(**kwargs)
+
+    def analyzeEvent(self, particles):
+        self.pThatEventCounts[self.pThatIndex] += 1
+        #particles=[p for p in particles if p.pT>self.pTMin]
+        fjHadrons = self.fillFastJetConstituents(particles)
+        cs = fj.ClusterSequence(fjHadrons, self.jetDefinition)
+        jets = fj.sorted_by_pt(cs.inclusive_jets())
+        jets_selected = self.jetSelector(jets)
+
+        for jet in jets_selected:
+            i = findIndex(self.pTBins, jet.pt())
+            if i >= 0:
+                self.countStorage[self.pThatIndex][i] += 1
+
+
+class HeavyJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
+    def __init__(self, drCut=0.3, heavypTMin=5, heavyRapidityCut=None, heavyEtaCut=None, **kwargs):
+        super(HeavyJetpTYieldAnalysis, self).__init__(**kwargs)
+        self.drCut = 0.3
+        self.heavypTMin = heavypTMin
+        self.heavyRapidityCut = heavyRapidityCut
+        self.heavyEtaCut = heavyEtaCut
+
+    def analyzeEvent(self, particles):
+        self.pThatEventCounts[self.pThatIndex] += 1
+        #particles=[p for p in particles if p.pT>self.pTMin]
+        fjHadrons = self.fillFastJetConstituents(particles)
+        cs = fj.ClusterSequence(fjHadrons, self.jetDefinition)
+        jets = fj.sorted_by_pt(cs.inclusive_jets())
+        jets_selected = self.jetSelector(jets)
+
+        for jet in jets_selected:
+            for hadron in fjHadrons:
+                dr = np.sqrt((hadron.eta()-jet.eta())**2 +
+                             (hadron.phi()-jet.phi())**2)
+                if hadron.user_index() in self.ids \
+                        and dr < self.drCut \
+                        and hadron.pt() > self.heavypTMin \
+                        and withinInterval(hadron.eta(), self.heavyEtaCut) \
+                        and withinInterval(hadron.rap(), self.heavyRapidityCut):
+                    i = findIndex(self.pTBins, jet.pt())
+                    if i >= 0:
+                        self.countStorage[self.pThatIndex][i] += 1
+                        break
+
+
+class HeavyRadialProfileAnalysis(JetShapeAnalysis):
+    def __init__(self, drCut=0.3, heavypTMin=5, heavyRapidityCut=None, heavyEtaCut=None, **kwargs):
+        super(HeavyRadialProfileAnalysis, self).__init__(**kwargs)
+        self.drCut = 0.3
+        self.heavypTMin = heavypTMin
+        self.heavyRapidityCut = heavyRapidityCut
+        self.heavyEtaCut = heavyEtaCut
+
+    def analyzeEvent(self, particles):
+        self.pThatEventCounts[self.pThatIndex] += 1
+        fjHadrons = self.fillFastJetConstituents(particles)
+        cs = fj.ClusterSequence(fjHadrons, self.jetDefinition)
+        jets = fj.sorted_by_pt(cs.inclusive_jets())
+        jets_selected = self.jetSelector(jets)
+
+        for jet in jets_selected:
+            constituents = jet.constituents()
+            for hadron in constituents:
+                dr = np.sqrt((hadron.eta()-jet.eta())**2 +
+                             (hadron.phi()-jet.phi())**2)
+                if hadron.user_index() in self.ids \
+                        and dr < self.drCut \
+                        and hadron.pt() > self.heavypTMin \
+                        and withinInterval(hadron.eta(), self.heavyEtaCut) \
+                        and withinInterval(hadron.rap(), self.heavyRapidityCut):
+                    i = findIndex(self.rBins, jet.pt())
+                    if i >= 0:
+                        self.countStorage[self.pThatIndex][i] += 1
+                        break
 
 
 class FlowAnalysis(pTYieldAnalysis):
@@ -257,7 +411,7 @@ class FlowAnalysis(pTYieldAnalysis):
         hydroId = self.allHydros.index(self.currentHydro)
 
         for p in particles:
-            if p.pid in self.ids and withinInterval(p.eta, self.etaCut) and withinInterval(p.y, self.rapidityCut):
+            if p.pid in self.ids and p.pT > self.pTMin and withinInterval(p.eta, self.etaCut) and withinInterval(p.y, self.rapidityCut):
                 for i in range(self.NpTBins):
                     if p.pT > self.pTBins[i] and p.pT < self.pTBins[i + 1]:
                         self.Q2_Re[self.pThatIndex][i][hydroId] += np.cos(
@@ -312,4 +466,4 @@ class FlowAnalysis(pTYieldAnalysis):
                     v2[:, 0], v2[:, 1])[0]/v2_ch_rms)
 
         ptBinsAvg = (np.array(self.pTBins[0:-1])+np.array(self.pTBins[1:]))/2
-        np.savetxt(self.outputFileName, np.transpose([ptBinsAvg, rst]))
+        np.savetxt(self.outputFileName, np.transpose([ptBinsAvg, rst]), header=self.outputHeader())
