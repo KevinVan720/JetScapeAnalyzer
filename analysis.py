@@ -9,7 +9,7 @@ from itertools import groupby
 import fastjet as fj
 import fjext
 from time import time
-from numba import jit
+#from numba import jit
 #import time
 
 logDelta=0.000000001
@@ -51,14 +51,13 @@ def withinInterval(y, interval):
     return False
 
 
-@jit(nopython=True)
+#@jit(nopython=True)
 def rap(a, b):
     return 0.5 * np.log((a + b + logDelta) /
                         (a - b + logDelta))
 
 
 class Particle:
-   # @jit(forceobj=True)
     def __init__(self, pid, status, E, px, py, pz):
         self.pid = pid
         self.status = status
@@ -69,7 +68,7 @@ class Particle:
         self.pT = np.sqrt(px**2+py**2)
         self.y = rap(E,pz)
         self.eta = rap(np.sqrt(px**2+py**2+pz**2), pz)
-        #self.phi = np.arctan2(px, py)
+        self.phi = np.arctan2(px, py)
 
 
 class JetScapeReader:
