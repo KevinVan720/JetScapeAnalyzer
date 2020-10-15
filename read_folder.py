@@ -59,11 +59,13 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
                 for hadrons in reader.readAllEvents():
                     for analysis in allAnalysis:
 
-                        if reader.currentHydroInfo != [] and reader.currentCrossSection > 0:
-                            analysis.setStatus(pThatIndex, reader)
                         # no hydro information? Can not do flow analysis
-                        else:
+                        if reader.currentHydroInfo==[]:
                             assert(analysis is not FlowAnalysis)
+
+                        if reader.currentCrossSection > 0:
+                            analysis.setStatus(pThatIndex, reader)
+                        else:
                             sigma = getCrossSectionFromFile(
                                 inputDir, "Xsection_*"+pThatString+"*.dat")
                             analysis.setCrossSection(pThatIndex, sigma)

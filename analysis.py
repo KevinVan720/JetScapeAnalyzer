@@ -54,7 +54,7 @@ def withinInterval(y, interval):
 #@jit(nopython=True)
 def rap(a, b):
     return 0.5 * np.log((a + b + logDelta) /
-                        (a - b + logDelta))
+                        (abs(a - b) + logDelta))
 
 
 class Particle:
@@ -72,12 +72,15 @@ class Particle:
 
 
 class JetScapeReader:
-    def __init__(self, fileName):
+    def __init__(self, fileName, pTMin=0.0):
         self.fileName = fileName
+
+        self.pTMin=pTMin
         self.currentEventCount = 0
         self.currentCrossSection = 0
         self.currentHydroInfo = []
         self.particleList = []
+        
 
     def readEventHeader(self, strlist):
         '''
@@ -89,6 +92,12 @@ class JetScapeReader:
                 "sigmaGen" in strlist and "Ncoll" in strlist and "v_2" in strlist and "psi_2" in strlist)
             self.currentCrossSection = float(strlist[6].strip())
             self.currentHydroInfo = [float(a.strip()) for a in strlist[8::2]]
+            self.currentEventCount += 1
+        
+        if len(strlist) == 9:
+            assert(
+                "sigmaGen" in strlist and "Ncoll" in strlist)
+            self.currentCrossSection = float(strlist[6].strip())
             self.currentEventCount += 1
 
     def readAllEvents(self):
@@ -109,15 +118,17 @@ class JetScapeReader:
                         i, pid, status, E, px, py, pz, eta, phi = [
                             float(a) for a in strlist
                         ]
-                        self.particleList.append(
-                            Particle(pid, status, E, px, py, pz)
-                        )
+                        if np.sqrt(px**2+py**2)>self.pTMin:
+                            self.particleList.append(
+                                Particle(pid, status, E, px, py, pz)
+                            )
                     elif len(strlist) == 6:
                         pid, status, E, px, py, pz = [
                             float(a) for a in strlist
                         ]
-                        self.particleList.append(
-                            Particle(pid, status, E, px, py, pz))
+                        if np.sqrt(px**2+py**2)>self.pTMin:
+                            self.particleList.append(
+                                Particle(pid, status, E, px, py, pz))
                     else:
                         print("Unknown particle length")
 
@@ -380,7 +391,7 @@ class HeavyRadialProfileAnalysis(JetShapeAnalysis):
                         and hadron.pt() > self.heavypTMin \
                         and withinInterval(hadron.eta(), self.heavyEtaCut) \
                         and withinInterval(hadron.rap(), self.heavyRapidityCut):
-                    i = findIndex(self.rBins, jet.pt())
+                    i = findIndex(self.rBins, dr)
                     if i >= 0:
                         self.countStorage[self.pThatIndex][i] += 1
                         break
