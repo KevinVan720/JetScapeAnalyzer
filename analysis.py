@@ -67,7 +67,7 @@ class Particle:
         self.pT = np.sqrt(px**2+py**2)
         self.y = rap(E,pz)
         self.eta = rap(np.sqrt(px**2+py**2+pz**2), pz)
-        self.phi = np.arctan2(px, py)
+        self.phi = np.arctan2(py, px)
 
 
 class JetScapeReader:
@@ -146,7 +146,6 @@ Assumption:
 1.the simulation is setup with many pThatBins and we want to combine them in the analysis
 2. the simulation is interested in particles pf certain id and status
 '''
-
 
 class AnalysisBase:
     def __init__(self, pThatBins=[], ids=[], status=[], outputFileName=""):
