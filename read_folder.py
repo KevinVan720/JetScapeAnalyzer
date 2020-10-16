@@ -71,6 +71,10 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
                             analysis.setCrossSection(pThatIndex, sigma)
 
                         analysis.analyzeEvent(hadrons)
+            
+            #temp output file to see anything wrong
+            for analysis in allAnalysis:
+                analysis.outputResult()
                 
 
     for analysis in allAnalysis:

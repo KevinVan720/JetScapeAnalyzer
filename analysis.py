@@ -56,7 +56,6 @@ def rap(a, b):
     return 0.5 * np.log((a + b + logDelta) /
                         (abs(a - b) + logDelta))
 
-
 class Particle:
     def __init__(self, pid, status, E, px, py, pz):
         self.pid = pid
@@ -72,7 +71,7 @@ class Particle:
 
 
 class JetScapeReader:
-    def __init__(self, fileName, pTMin=0.0):
+    def __init__(self, fileName, pTMin=0.1):
         self.fileName = fileName
 
         self.pTMin=pTMin
@@ -80,7 +79,6 @@ class JetScapeReader:
         self.currentCrossSection = 0
         self.currentHydroInfo = []
         self.particleList = []
-        
 
     def readEventHeader(self, strlist):
         '''
@@ -224,7 +222,7 @@ class JetAnalysisBase(AnalysisBase):
 
 
 class pTYieldAnalysis(AnalysisBase):
-    def __init__(self, pTBins=[], pTMin=0.01, rapidityCut=[-2, 2], etaCut=None, **kwargs):
+    def __init__(self, pTBins=[], pTMin=0.1, rapidityCut=[-2, 2], etaCut=None, **kwargs):
         super().__init__(**kwargs)
         self.pTBins = pTBins
         self.NpTBins = len(self.pTBins)-1
