@@ -22,22 +22,26 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
 
     allAnalysis = [
         pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100, 200, 300, 500],
-                        ids=[211, -211, 213, -213, 321, -321, 2212, -2212, 3222, -3222, 3112, -3112, 3312, -3312, 3334, -3334], rapidityCut=[-1, 1], outputFileName=outputDir+"ch_yield"),
+                        ids=[211, -211, 213, -213, 321, -321, 2212, -2212, 3222, -3222, 3112, -3112, 3312, -3312, 3334, -3334, 411, -411, 421, -421, 413, -413, 423, -423], etaCut=[-1, 1], outputFileName=outputDir+"ch_yield"),
         pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100, 200, 300, 500],
-                        ids=[211, -211, 213, -213, 321, -321, 2212, -2212, 3222, -3222, 3112, -3112, 3312, -3312, 3334, -3334], rapidityCut=[-0.5, 0.5], outputFileName=outputDir+"ch_yield"),
+                        ids=[211, -211, 213, -213, 321, -321, 2212, -2212, 3222, -3222, 3112, -3112, 3312, -3312, 3334, -3334, 411, -411, 421, -421, 413, -413, 423, -423], etaCut=[-0.5, 0.5], outputFileName=outputDir+"ch_yield"),
         pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
                         ids=[421, -421], rapidityCut=[-1, 1], outputFileName=outputDir+"D0_yield"),
         pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
                         ids=[421, -421], rapidityCut=[-0.5, 0.5], outputFileName=outputDir+"D0_yield"),
-        FlowAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 15, 20, 40],
-                     ids=[411, -411, 421, -421, 413, -413, 423, -423], rapidityCut=[-1, 1], outputFileName=outputDir+"D0_v2"),
-        InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100, 250, 300, 350],
-                                    rapidityCut=[-1, 1],
+        #FlowAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 15, 20, 40],
+        #             ids=[411, -411, 421, -421, 413, -413, 423, -423], rapidityCut=[-1, 1], outputFileName=outputDir+"D0_v2"),
+        InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[10, 15, 20, 25, 30, 40, 60, 100, 250, 300, 350],
                                    jetRadius=0.3, jetpTMin=1, jetRapidityCut=[-2, 2],
                                    outputFileName=outputDir+"inclusiveJet_yield"),
+        InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[25, 30, 40, 60, 100, 250, 300, 350, 400,450, 500, 600, 700, 800, 900, 1000],
+                                   jetRadius=0.4, jetpTMin=1, jetRapidityCut=[-2.8, 2.8],
+                                   outputFileName=outputDir+"inclusiveJet_yield"),
         HeavyJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[40, 60, 80, 100, 120, 140, 160, 180, 200, 240, 280, 320, 360],
-                                jetRadius=0.2, jetEtaCut=[-2.1, 2.1], drCut=0.3, heavypTMin=5, ids=[411, -411, 421, -421, 413, -413, 423, -423], outputFileName=outputDir+"DJet_yield"),
-        HeavyRadialProfileAnalysis(pThatBins=pThatPair, rBins=[0, 0.05, 0.1, 0.3, 0.5], jetRadius=0.3, jetpTMin=60, jetEtaCut=[-1.6, 1.6], heavypTMin=20, heavyEtaCut=[-2, 2], ids=[-421, 421],
+                                jetRadius=0.2, jetEtaCut=[-2.1, 2.1], drCut=0.3, heavypTCut=[5,30000], ids=[411, -411, 421, -421, 413, -413, 423, -423], outputFileName=outputDir+"DJet_yield"),
+        HeavyRadialProfileAnalysis(pThatBins=pThatPair, rBins=[0, 0.05, 0.1, 0.3, 0.5], jetRadius=0.3, jetpTMin=60, jetEtaCut=[-1.6, 1.6], heavypTCut=[20,30000], heavyEtaCut=[-2, 2], ids=[-421, 421],
+                                   outputFileName=outputDir+"D0_jet_radialprofile"),
+        HeavyRadialProfileAnalysis(pThatBins=pThatPair, rBins=[0, 0.05, 0.1, 0.3, 0.5], jetRadius=0.3, jetpTMin=60, jetEtaCut=[-1.6, 1.6], heavypTCut=[4,20], heavyEtaCut=[-2, 2], ids=[-421, 421],
                                    outputFileName=outputDir+"D0_jet_radialprofile"),
     ]
 
@@ -73,10 +77,9 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
                         analysis.analyzeEvent(hadrons)
             
             #temp output file to see anything wrong
-            for analysis in allAnalysis:
-                analysis.outputResult()
-                
-
+            #for analysis in allAnalysis:
+            #    analysis.outputResult()
+    
     for analysis in allAnalysis:
         analysis.outputResult()
 

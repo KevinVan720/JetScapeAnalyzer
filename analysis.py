@@ -221,7 +221,7 @@ class JetAnalysisBase(AnalysisBase):
 
 
 class pTYieldAnalysis(AnalysisBase):
-    def __init__(self, pTBins=[], pTMin=0.1, rapidityCut=[-2, 2], etaCut=None, **kwargs):
+    def __init__(self, pTBins=[], pTMin=0.1, rapidityCut=None, etaCut=None, **kwargs):
         super().__init__(**kwargs)
         self.pTBins = pTBins
         self.NpTBins = len(self.pTBins)-1
@@ -333,10 +333,10 @@ class InclusiveJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
 
 
 class HeavyJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
-    def __init__(self, drCut=0.3, heavypTMin=5, heavyRapidityCut=None, heavyEtaCut=None, **kwargs):
+    def __init__(self, drCut=0.3, heavypTCut=None, heavyRapidityCut=None, heavyEtaCut=None, **kwargs):
         super().__init__(**kwargs)
         self.drCut = 0.3
-        self.heavypTMin = heavypTMin
+        self.heavypTCut = heavypTCut
         self.heavyRapidityCut = heavyRapidityCut
         self.heavyEtaCut = heavyEtaCut
 
@@ -348,7 +348,7 @@ class HeavyJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
         jets_selected = self.jetSelector(jets)
 
         fjHadrons = [hadron for hadron in fjHadrons if hadron.user_index() in self.ids
-                     and hadron.pt() > self.heavypTMin
+                     and withinInterval(hadron.pt(), self.heavypTCut)
                      and withinInterval(hadron.eta(), self.heavyEtaCut)
                      and withinInterval(hadron.rap(), self.heavyRapidityCut)]
 
@@ -364,10 +364,9 @@ class HeavyJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
 
 
 class HeavyRadialProfileAnalysis(JetShapeAnalysis):
-    def __init__(self, drCut=0.3, heavypTMin=5, heavyRapidityCut=None, heavyEtaCut=None, **kwargs):
+    def __init__(self, heavypTCut=None, heavyRapidityCut=None, heavyEtaCut=None, **kwargs):
         super().__init__(**kwargs)
-        self.drCut = 0.3
-        self.heavypTMin = heavypTMin
+        self.heavypTCut = heavypTCut
         self.heavyRapidityCut = heavyRapidityCut
         self.heavyEtaCut = heavyEtaCut
 
@@ -379,13 +378,12 @@ class HeavyRadialProfileAnalysis(JetShapeAnalysis):
         jets_selected = self.jetSelector(jets)
 
         for jet in jets_selected:
-            constituents = jet.constituents()
-            for hadron in constituents:
+            #constituents = jet.constituents()
+            for hadron in fjHadrons:
                 dr = np.sqrt((hadron.eta()-jet.eta())**2 +
                              (hadron.phi()-jet.phi())**2)
                 if hadron.user_index() in self.ids \
-                        and dr < self.drCut \
-                        and hadron.pt() > self.heavypTMin \
+                        and withinInterval(hadron.pt(), self.heavypTCut) \
                         and withinInterval(hadron.eta(), self.heavyEtaCut) \
                         and withinInterval(hadron.rap(), self.heavyRapidityCut):
                     i = findIndex(self.rBins, dr)
