@@ -37,12 +37,12 @@ def strNotContain(name):
 def findIndex(valList, val):
     assert(len(valList) >= 2)
     for i in range(len(valList)-1):
-        if val > valList[i] and val < valList[i+1]:
+        if val > valList[i] and val <= valList[i+1]:
             return i
     return -1
 
 def withinInterval(y, interval):
-    if interval == None:
+    if interval == None or len(interval)==0:
         return True
     if len(interval) == 2:
         assert(interval[0] < interval[1])
@@ -92,10 +92,13 @@ class JetScapeReader:
             self.currentHydroInfo = [float(a.strip()) for a in strlist[8::2]]
             self.currentEventCount += 1
         
-        if len(strlist) == 9:
-            assert(
-                "sigmaGen" in strlist and "Ncoll" in strlist)
+        elif len(strlist) == 9 and "sigmaGen" in strlist and "Ncoll" in strlist:
+            #assert(
+            #    "sigmaGen" in strlist and "Ncoll" in strlist)
             self.currentCrossSection = float(strlist[6].strip())
+            self.currentEventCount += 1
+        else:
+            #old event header with no cross section
             self.currentEventCount += 1
 
     def readAllEvents(self):
@@ -219,9 +222,55 @@ class JetAnalysisBase(AnalysisBase):
 
         return fj_particles
 
+class etaYieldAnalysis(AnalysisBase):
+    def __init__(self, etaBins=[], useRap=False, pTCut=None, **kwargs):
+        super().__init__(**kwargs)
+        self.etaBins = etaBins
+        self.NetaBins = len(self.etaBins)-1
+
+        self.useRap=useRap
+
+        self.pTCut = pTCut
+        self.countStorage = [
+            [0 for j in range(self.NetaBins)] for i in range(self.NpThatBins)]
+
+    def analyzeEvent(self, particles):
+
+        # filtering the particles first to save time
+        particles = [p for p in particles if p.pid in self.ids and withinInterval(
+            p.pT, self.pTCut)]
+        for p in particles:
+            if self.useRap:
+                i = findIndex(self.etaBins, p.y)
+            else:
+                i = findIndex(self.etaBins, p.eta)
+            if i >= 0:
+                self.countStorage[self.pThatIndex][i] += 1
+
+    def outputResult(self):
+        if np.sum(self.pThatEventCounts) == 0:
+            return
+
+        rst = [0 for j in range(self.NetaBins)]
+        err = [0 for j in range(self.NetaBins)]
+        for pThat in range(self.NpThatBins):
+            for eta in range(self.NetaBins):
+                if self.pThatEventCounts[pThat] > 0:
+                    normalizeFactor = self.pThatEventCounts[pThat]*(
+                        self.etaBins[eta+1]-self.etaBins[eta])
+                    rst[eta] += self.countStorage[pThat][eta] * \
+                        self.pThatEventCrossSections[pThat]/normalizeFactor
+                    err[eta] += self.countStorage[pThat][eta] * \
+                        self.pThatEventCrossSections[pThat]**2 / \
+                        normalizeFactor**2
+
+        err = [np.sqrt(x) for x in err]
+        etaBinsAvg = (np.array(self.etaBins[0:-1])+np.array(self.etaBins[1:]))/2
+        np.savetxt(self.outputFileName, np.transpose(
+            [etaBinsAvg, rst, err]), header=self.outputHeader())
 
 class pTYieldAnalysis(AnalysisBase):
-    def __init__(self, pTBins=[], pTMin=0.1, rapidityCut=None, etaCut=None, **kwargs):
+    def __init__(self, pTBins=[], pTMin=0.01, rapidityCut=None, etaCut=None, **kwargs):
         super().__init__(**kwargs)
         self.pTBins = pTBins
         self.NpTBins = len(self.pTBins)-1
@@ -230,7 +279,7 @@ class pTYieldAnalysis(AnalysisBase):
         self.rapidityCut = rapidityCut
         self.etaCut = etaCut
         self.countStorage = [
-            [0 for j in range(len(self.pTBins)-1)] for i in range(len(self.pThatBins)-1)]
+            [0 for j in range(self.NpTBins)] for i in range(self.NpThatBins)]
 
     def analyzeEvent(self, particles):
 
@@ -273,7 +322,7 @@ class JetShapeAnalysis(JetAnalysisBase):
         self.NrBins = len(self.rBins)-1
 
         self.countStorage = [
-            [0 for j in range(len(self.rBins)-1)] for i in range(len(self.pThatBins)-1)]
+            [0 for j in range(self.NrBins)] for i in range(self.NpThatBins)]
 
     def analyzeEvent(self, particles):
 
@@ -361,7 +410,6 @@ class HeavyJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
                     if i >= 0:
                         self.countStorage[self.pThatIndex][i] += 1
                         break
-
 
 class HeavyRadialProfileAnalysis(JetShapeAnalysis):
     def __init__(self, heavypTCut=None, heavyRapidityCut=None, heavyEtaCut=None, **kwargs):
