@@ -20,16 +20,14 @@ def doAnalysis():
     pThat_Min = pThatPair[:-1]
     pThat_Max = pThatPair[1:]
 
-    chargeHadronId=[211, -211, 213, -213, 321, -321, 2212, -2212, 3222, -3222, 3112, -3112, 3312, -3312, 3334, -3334]
-    
 
     allAnalysis = [
         pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100, 200, 300, 500],
-                        ids=chargeHadronId, etaCut=[-1, 1], outputFileName=outputDir+"ch_yield"),
+                        ids=chargeHadronIds, etaCut=[-1, 1], outputFileName=outputDir+"ch_yield"),
         pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100, 200, 300, 500],
-                        ids=chargeHadronId, etaCut=[-0.5, 0.5], outputFileName=outputDir+"ch_yield"),
+                        ids=chargeHadronIds, etaCut=[-0.5, 0.5], outputFileName=outputDir+"ch_yield"),
         pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100, 200, 300, 500],
-                        ids=chargeHadronId, etaCut=[-0.1, 0.1], outputFileName=outputDir+"ch_yield"),
+                        ids=chargeHadronIds, etaCut=[-0.1, 0.1], outputFileName=outputDir+"ch_yield"),
 
         pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
                         ids=[421, -421], rapidityCut=[-1, 1], outputFileName=outputDir+"D0_yield"),
@@ -39,13 +37,13 @@ def doAnalysis():
                         ids=[421, -421], rapidityCut=[-0.1, 0.1], outputFileName=outputDir+"D0_yield"),
 
         etaYieldAnalysis(pThatBins=pThatPair, etaBins=list([-5+0.1*x for x in range(101)]),
-                         ids=chargeHadronId, outputFileName=outputDir+"ch_eta_yield"),
+                         ids=chargeHadronIds, outputFileName=outputDir+"ch_eta_yield"),
         etaYieldAnalysis(pThatBins=pThatPair, etaBins=list([-5+0.1*x for x in range(101)]), useRap=True,
-                         ids=chargeHadronId, outputFileName=outputDir+"ch_rap_yield"),
+                         ids=chargeHadronIds, outputFileName=outputDir+"ch_rap_yield"),
         etaYieldAnalysis(pThatBins=pThatPair, etaBins=list([-5+0.1*x for x in range(101)]), pTCut = [90, 100],
-                         ids=chargeHadronId, outputFileName=outputDir+"ch_eta_yield"),
+                         ids=chargeHadronIds, outputFileName=outputDir+"ch_eta_yield"),
         etaYieldAnalysis(pThatBins=pThatPair, etaBins=list([-5+0.1*x for x in range(101)]), useRap=True, pTCut=[90, 100],
-                         ids=chargeHadronId, outputFileName=outputDir+"ch_rap_yield"),
+                         ids=chargeHadronIds, outputFileName=outputDir+"ch_rap_yield"),
 
         etaYieldAnalysis(pThatBins=pThatPair, etaBins=list([-5+0.1*x for x in range(101)]),
                          ids=[421, -421], outputFileName=outputDir+"D0_eta_yield"),
