@@ -12,14 +12,15 @@ from time import time
 #from numba import jit
 #import time
 
+logDelta=0.000000001
 
-chargeHadronIds =[211, 213, 9000211, 10213, 20213, 100211, 215, 9000213, 10211, 100213, 9010213, 10215,
+chargeHadronId = [211, 213, 9000211, 10213, 20213, 100211, 215, 9000213, 10211, 100213, 9010213, 10215,
  217, 30213, 9010211, 219, 321, 323, 10323, 20323, 100323, 10321, 325, 30323, 10325, 327, 20325, 329, 2212,
   12212, 2124, 22212, 32212, 2216, 12216, 22124, 42212, 32124, 2128, 1114, 2214, 2224, 31114, 32214, 32224,
    1112, 2122, 2222, 11114, 12214, 12224, 1116, 2126, 2226, 21112, 22122, 22222, 21114, 22214, 22224, 11116,
     12126, 12226, 1118, 2218, 2228, 3222, 3112, 3114, 3224, 13112, 13222, 13114, 13224, 23112, 23222, 3116,
-     3226, 13116, 13226, 23114, 23224, 3118, 3228, 3312, 3314, 203312, 13314, 103316, 203316, 3334, 203338, 
-     -211, -213, -9000211, -10213, -20213, -100211, -215, -9000213, -10211, -100213, -9010213, -10215, -217, 
+     3226, 13116, 13226, 23114, 23224, 3118, 3228, 3312, 3314, 203312, 13314, 103316, 203316, 3334, 203338,
+     -211, -213, -9000211, -10213, -20213, -100211, -215, -9000213, -10211, -100213, -9010213, -10215, -217,
      -30213, -9010211, -219, -321, -323, -10323, -20323, -100323, -10321, -325, -30323, -10325, -327, -20325,
       -329, -2212, -12212, -2124, -22212, -32212, -2216, -12216, -22124, -42212, -32124, -2128, -1114, -2214,
        -2224, -31114, -32214, -32224, -1112, -2122, -2222, -11114, -12214, -12224, -1116, -2126, -2226, -21112,
@@ -28,7 +29,6 @@ chargeHadronIds =[211, 213, 9000211, 10213, 20213, 100211, 215, 9000213, 10211, 
           -3228, -3312, -3314, -203312, -13314, -103316, -203316, -3334, -203338,
           411,-411,413,-413, 521,-521,523,-523]
 
-logDelta=0.000000001
 
 def weighted_avg_and_std(values, weights):
     """
@@ -44,7 +44,7 @@ def weighted_avg_and_std(values, weights):
 
 def strNotContain(name):
     noNames = ["File", "pThat", "Count",
-               "Bins", "jetDefinition", "jetSelector", "Q0", "Q2", "Hydro"]
+              "jetDefinition", "jetSelector", "Q0", "Q2", "Hydro"]
     for n in noNames:
         if n.upper() in name.upper() or n.lower() in name.lower():
             return False
@@ -69,7 +69,7 @@ def withinInterval(y, interval):
 
 #@jit(nopython=True)
 def rap(a, b):
-    return 0.5 * np.log((abs(a + b) + logDelta) /
+    return 0.5 * np.log((a + b + logDelta) /
                         (abs(a - b) + logDelta))
 
 class Particle:
@@ -85,9 +85,16 @@ class Particle:
         self.eta = rap(np.sqrt(px**2+py**2+pz**2), pz)
         self.phi = np.arctan2(py, px)
 
+    def __eq__(self, other): 
+        if not isinstance(other, Particle):
+            # don't attempt to compare against unrelated types
+            return False
+
+        return self.pid == other.pid and self.status == other.status and self.E == other.E and self.px == other.px and self.py == other.py and self.pz == other.pz
+
 
 class JetScapeReader:
-    def __init__(self, fileName, pTMin=0.0):
+    def __init__(self, fileName, pTMin=0.1):
         self.fileName = fileName
 
         self.pTMin=pTMin
@@ -330,6 +337,65 @@ class pTYieldAnalysis(AnalysisBase):
         np.savetxt(self.outputFileName, np.transpose(
             [ptBinsAvg, rst, err]), header=self.outputHeader())
 
+class correlationYieldAnalysis(AnalysisBase):
+    def __init__(self, ids1=[], ids2=[], etaBins=[],phiBins=[], useRap=False, pTCut1=None, pTCut2=None, **kwargs):
+        super().__init__(**kwargs)
+        self.ids1=ids1
+        self.ids2=ids2
+        self.etaBins = etaBins
+        self.NetaBins = len(self.etaBins)-1
+        self.phiBins = phiBins
+        self.NphiBins = len(self.phiBins)-1
+
+        self.useRap=useRap
+
+        self.pTCut1 = pTCut1
+        self.pTCut2 = pTCut2
+        self.countStorage = [[
+            [0 for j in range(self.NetaBins)] for i in range(self.NphiBins)] for k in range(self.NpThatBins)]
+
+    def analyzeEvent(self, particles):
+
+        # filtering the particles first to save time
+        particles1 = [p for p in particles if p.pid in self.ids1 and withinInterval(
+            p.pT, self.pTCut1)]
+        particles2 = [p for p in particles if p.pid in self.ids2 and withinInterval(
+            p.pT, self.pTCut2)]
+        for p1 in particles1:
+            for p2 in particles2:
+                if p1!=p2:                
+                    if self.useRap:
+                        j= findIndex(self.etaBins, p1.y-p2.y)
+                    else:
+                        j = findIndex(self.etaBins, p1.eta-p2.eta)
+                    i= findIndex(self.phiBins, p1.phi-p2.phi)
+  
+                    if i >= 0 and j>=0 :
+                        self.countStorage[self.pThatIndex][i][j] += 1
+
+    def outputResult(self):
+        if np.sum(self.pThatEventCounts) == 0:
+            return
+
+        rst = [[0 for j in range(self.NetaBins)] for i in range(self.NphiBins)]
+        #err = [0 for j in range(self.NetaBins)]
+        for pThat in range(self.NpThatBins):
+            for phi in range(self.NphiBins):
+                for eta in range(self.NetaBins):
+                    if self.pThatEventCounts[pThat] > 0:
+                        normalizeFactor = self.pThatEventCounts[pThat]*(
+                            self.etaBins[eta+1]-self.etaBins[eta])*(
+                            self.phiBins[phi+1]-self.phiBins[phi])
+                        rst[phi][eta] += self.countStorage[pThat][phi][eta] * \
+                            self.pThatEventCrossSections[pThat]/normalizeFactor
+                        #err[eta] += self.countStorage[pThat][eta] * \
+                        #self.pThatEventCrossSections[pThat]**2 / \
+                        #normalizeFactor**2
+
+        #err = [np.sqrt(x) for x in err]
+        #etaBinsAvg = (np.array(self.etaBins[0:-1])+np.array(self.etaBins[1:]))/2
+        
+        np.savetxt(self.outputFileName, rst, header=self.outputHeader())
 
 class JetShapeAnalysis(JetAnalysisBase):
     def __init__(self, rBins, **kwargs):

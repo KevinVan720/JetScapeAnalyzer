@@ -43,7 +43,8 @@ pyyaml \
 scikit-learn \
 scipy \
 seaborn \
-tqdm
+tqdm \
+numba
 
 # We need cmake >= 3.13.5 for the analysis package heppy
 RUN cd /opt \
