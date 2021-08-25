@@ -338,7 +338,7 @@ class pTYieldAnalysis(AnalysisBase):
             [ptBinsAvg, rst, err]), header=self.outputHeader())
 
 class correlationYieldAnalysis(AnalysisBase):
-    def __init__(self, ids1=[], ids2=[], etaBins=[],phiBins=[], useRap=False, pTCut1=None, pTCut2=None, **kwargs):
+    def __init__(self, ids1=[], ids2=[], etaBins=[],phiBins=[], useAnti=False, useRap=False, pTCut1=None, pTCut2=None,rapidityCut1=None, etaCut1=None,rapidityCut2=None, etaCut2=None, **kwargs):
         super().__init__(**kwargs)
         self.ids1=ids1
         self.ids2=ids2
@@ -348,22 +348,39 @@ class correlationYieldAnalysis(AnalysisBase):
         self.NphiBins = len(self.phiBins)-1
 
         self.useRap=useRap
+        self.useAnti=useAnti
 
         self.pTCut1 = pTCut1
         self.pTCut2 = pTCut2
+        self.rapidityCut1 = rapidityCut1
+        self.etaCut1 = etaCut1
+        self.rapidityCut2 = rapidityCut2
+        self.etaCut2 = etaCut2
         self.countStorage = [[
             [0 for j in range(self.NetaBins)] for i in range(self.NphiBins)] for k in range(self.NpThatBins)]
 
     def analyzeEvent(self, particles):
 
         # filtering the particles first to save time
-        particles1 = [p for p in particles if p.pid in self.ids1 and withinInterval(
-            p.pT, self.pTCut1)]
-        particles2 = [p for p in particles if p.pid in self.ids2 and withinInterval(
-            p.pT, self.pTCut2)]
+        if self.useRap:
+            particles1 = [p for p in particles if p.pid in self.ids1 and withinInterval(
+            p.pT, self.pTCut1) and withinInterval(
+            p.y, self.rapidityCut1)]
+            particles2 = [p for p in particles if p.pid in self.ids1 and withinInterval(
+            p.pT, self.pTCut2) and withinInterval(
+            p.y, self.rapidityCut2)]
+        else:
+            particles1 = [p for p in particles if p.pid in self.ids1 and withinInterval(
+            p.pT, self.pTCut1) and withinInterval(
+            p.eta, self.etaCut1)]
+            particles2 = [p for p in particles if p.pid in self.ids2 and withinInterval(
+            p.pT, self.pTCut2) and withinInterval(
+            p.eta, self.etaCut2)]
+            
+        
         for p1 in particles1:
             for p2 in particles2:
-                if p1!=p2:                
+                if p1!=p2 and (not self.useAnti or p1.pid*p2.pid<0):                
                     if self.useRap:
                         j= findIndex(self.etaBins, p1.y-p2.y)
                     else:
