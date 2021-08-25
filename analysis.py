@@ -9,7 +9,7 @@ from itertools import groupby
 import fastjet as fj
 import fjext
 from time import time
-#from numba import jit
+from numba import jit
 #import time
 
 logDelta=0.000000001
