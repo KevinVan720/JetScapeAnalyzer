@@ -69,7 +69,7 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
         pTCut1=[4,8],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1=[421,-421],ids2=[22,-22], outputFileName=outputDir+"D0photon_correlation"),
 
         correlationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[4,8],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1=[411, -411, 421, -421, 413, -413, 423, -423],ids2=[22,-22], outputFileName=outputDir+"D0photon_correlation"),
+        pTCut1=[4,8],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1=[411, -411, 421, -421, 413, -413, 423, -423],ids2=[22,-22], outputFileName=outputDir+"Dphoton_correlation"),
         #etaYieldAnalysis(pThatBins=pThatPair, etaBins=list([-5+0.1*x for x in range(101)]),
         #                 ids=chargeHadronId, outputFileName=outputDir+"ch_eta_yield"),
         #etaYieldAnalysis(pThatBins=pThatPair, etaBins=list([-5+0.1*x for x in range(101)]), useRap=True,
