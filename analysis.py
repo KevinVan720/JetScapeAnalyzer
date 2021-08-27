@@ -422,7 +422,6 @@ class momentumFractionAnalysis(AnalysisBase):
         self.NptFractionBins = len(self.ptFractionBins)-1
 
         self.useRap=useRap
-        self.useAnti=useAnti
 
         self.pTCut1 = pTCut1
         self.pTCut2 = pTCut2
