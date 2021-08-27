@@ -335,7 +335,7 @@ class pTYieldAnalysis(AnalysisBase):
         np.savetxt(self.outputFileName, np.transpose(
             [ptBinsAvg, rst, err]), header=self.outputHeader())
 
-class correlationYieldAnalysis(AnalysisBase):
+class CorrelationYieldAnalysis(AnalysisBase):
     def __init__(self, ids1=[], ids2=[], etaBins=[],phiBins=[], useAnti=False, useRap=False, pTCut1=None, pTCut2=None,rapidityCut1=None, etaCut1=None,rapidityCut2=None, etaCut2=None, **kwargs):
         super().__init__(**kwargs)
         self.ids1=ids1
@@ -412,7 +412,7 @@ class correlationYieldAnalysis(AnalysisBase):
         
         np.savetxt(self.outputFileName, rst, header=self.outputHeader())
         
-class momentumFractionAnalysis(AnalysisBase):
+class MomentumFractionAnalysis(AnalysisBase):
     def __init__(self, ids1=[], ids2=[], ptFractionBins=[], useRap=False, pTCut1=None, pTCut2=None,rapidityCut1=None, etaCut1=None,rapidityCut2=None, etaCut2=None, **kwargs):
         super().__init__(**kwargs)
         self.ids1=ids1
@@ -453,10 +453,10 @@ class momentumFractionAnalysis(AnalysisBase):
         
         for p1 in particles1:
             for p2 in particles2:
-                if p1!=p2 and (not self.useAnti or p1.pid*p2.pid<0):                
+                if p1!=p2:                
                     i= findIndex(self.ptFractionBins, p1.pT/p2.pT)
   
-                    if i >= 0 and j>=0 :
+                    if i >= 0:
                         self.countStorage[self.pThatIndex][i] += 1
 
     def outputResult(self):
