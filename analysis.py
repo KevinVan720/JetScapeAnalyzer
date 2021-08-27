@@ -9,8 +9,6 @@ from itertools import groupby
 import fastjet as fj
 import fjext
 from time import time
-from numba import jit
-#import time
 
 logDelta=0.000000001
 
@@ -413,6 +411,76 @@ class correlationYieldAnalysis(AnalysisBase):
         #etaBinsAvg = (np.array(self.etaBins[0:-1])+np.array(self.etaBins[1:]))/2
         
         np.savetxt(self.outputFileName, rst, header=self.outputHeader())
+        
+class momentumFractionAnalysis(AnalysisBase):
+    def __init__(self, ids1=[], ids2=[], ptFractionBins=[], useRap=False, pTCut1=None, pTCut2=None,rapidityCut1=None, etaCut1=None,rapidityCut2=None, etaCut2=None, **kwargs):
+        super().__init__(**kwargs)
+        self.ids1=ids1
+        self.ids2=ids2
+ 
+        self.ptFractionBins = ptFractionBins
+        self.NptFractionBins = len(self.ptFractionBins)-1
+
+        self.useRap=useRap
+        self.useAnti=useAnti
+
+        self.pTCut1 = pTCut1
+        self.pTCut2 = pTCut2
+        self.rapidityCut1 = rapidityCut1
+        self.etaCut1 = etaCut1
+        self.rapidityCut2 = rapidityCut2
+        self.etaCut2 = etaCut2
+        self.countStorage = [[
+            0 for i in range(self.NptFractionBins)] for k in range(self.NpThatBins)]
+
+    def analyzeEvent(self, particles):
+
+        # filtering the particles first to save time
+        if self.useRap:
+            particles1 = [p for p in particles if p.pid in self.ids1 and withinInterval(
+            p.pT, self.pTCut1) and withinInterval(
+            p.y, self.rapidityCut1)]
+            particles2 = [p for p in particles if p.pid in self.ids1 and withinInterval(
+            p.pT, self.pTCut2) and withinInterval(
+            p.y, self.rapidityCut2)]
+        else:
+            particles1 = [p for p in particles if p.pid in self.ids1 and withinInterval(
+            p.pT, self.pTCut1) and withinInterval(
+            p.eta, self.etaCut1)]
+            particles2 = [p for p in particles if p.pid in self.ids2 and withinInterval(
+            p.pT, self.pTCut2) and withinInterval(
+            p.eta, self.etaCut2)]
+            
+        
+        for p1 in particles1:
+            for p2 in particles2:
+                if p1!=p2 and (not self.useAnti or p1.pid*p2.pid<0):                
+                    i= findIndex(self.ptFractionBins, p1.pT/p2.pT)
+  
+                    if i >= 0 and j>=0 :
+                        self.countStorage[self.pThatIndex][i] += 1
+
+    def outputResult(self):
+        if np.sum(self.pThatEventCounts) == 0:
+            return
+
+        rst = [0 for j in range(self.NptFractionBins)]
+        err = [0 for j in range(self.NptFractionBins)]
+        for pThat in range(self.NpThatBins):
+            for pTFraction in range(self.NptFractionBins):
+                    if self.pThatEventCounts[pThat] > 0:
+                        normalizeFactor = self.pThatEventCounts[pThat]*(
+                            self.ptFractionBins[ptFraction+1]-self.ptFractionBins[ptFraction])
+                        rst[ptFraction] += self.countStorage[pThat][ptFraction] * \
+                            self.pThatEventCrossSections[pThat]/normalizeFactor
+                        err[ptFractionBins] += self.countStorage[pThat][ptFraction] * \
+                        self.pThatEventCrossSections[pThat]**2 / \
+                        normalizeFactor**2
+
+        err = [np.sqrt(x) for x in err]
+        ptBinsAvg = (np.array(self.pTBins[0:-1])+np.array(self.pTBins[1:]))/2
+        np.savetxt(self.outputFileName, np.transpose(
+            [ptBinsAvg, rst, err]), header=self.outputHeader())
 
 class JetShapeAnalysis(JetAnalysisBase):
     def __init__(self, rBins, **kwargs):
