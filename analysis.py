@@ -413,13 +413,13 @@ class CorrelationYieldAnalysis(AnalysisBase):
         np.savetxt(self.outputFileName, rst, header=self.outputHeader())
         
 class MomentumFractionAnalysis(AnalysisBase):
-    def __init__(self, ids1=[], ids2=[], ptFractionBins=[], useRap=False, pTCut1=None, pTCut2=None,rapidityCut1=None, etaCut1=None,rapidityCut2=None, etaCut2=None, **kwargs):
+    def __init__(self, ids1=[], ids2=[], pTFractionBins=[], useRap=False, pTCut1=None, pTCut2=None,rapidityCut1=None, etaCut1=None,rapidityCut2=None, etaCut2=None, **kwargs):
         super().__init__(**kwargs)
         self.ids1=ids1
         self.ids2=ids2
  
-        self.ptFractionBins = ptFractionBins
-        self.NptFractionBins = len(self.ptFractionBins)-1
+        self.pTFractionBins = pTFractionBins
+        self.NpTFractionBins = len(self.pTFractionBins)-1
 
         self.useRap=useRap
 
@@ -430,7 +430,7 @@ class MomentumFractionAnalysis(AnalysisBase):
         self.rapidityCut2 = rapidityCut2
         self.etaCut2 = etaCut2
         self.countStorage = [[
-            0 for i in range(self.NptFractionBins)] for k in range(self.NpThatBins)]
+            0 for i in range(self.NpTFractionBins)] for k in range(self.NpThatBins)]
 
     def analyzeEvent(self, particles):
 
@@ -454,7 +454,7 @@ class MomentumFractionAnalysis(AnalysisBase):
         for p1 in particles1:
             for p2 in particles2:
                 if p1!=p2:                
-                    i= findIndex(self.ptFractionBins, p1.pT/p2.pT)
+                    i= findIndex(self.pTFractionBins, p1.pT/p2.pT)
   
                     if i >= 0:
                         self.countStorage[self.pThatIndex][i] += 1
@@ -466,20 +466,20 @@ class MomentumFractionAnalysis(AnalysisBase):
         rst = [0 for j in range(self.NptFractionBins)]
         err = [0 for j in range(self.NptFractionBins)]
         for pThat in range(self.NpThatBins):
-            for pTFraction in range(self.NptFractionBins):
+            for pTFraction in range(self.NpTFractionBins):
                     if self.pThatEventCounts[pThat] > 0:
                         normalizeFactor = self.pThatEventCounts[pThat]*(
-                            self.ptFractionBins[ptFraction+1]-self.ptFractionBins[ptFraction])
-                        rst[ptFraction] += self.countStorage[pThat][ptFraction] * \
+                            self.pTFractionBins[pTFraction+1]-self.pTFractionBins[pTFraction])
+                        rst[pTFraction] += self.countStorage[pThat][pTFraction] * \
                             self.pThatEventCrossSections[pThat]/normalizeFactor
-                        err[ptFractionBins] += self.countStorage[pThat][ptFraction] * \
+                        err[pTFractionBins] += self.countStorage[pThat][pTFraction] * \
                         self.pThatEventCrossSections[pThat]**2 / \
                         normalizeFactor**2
 
         err = [np.sqrt(x) for x in err]
-        ptBinsAvg = (np.array(self.pTBins[0:-1])+np.array(self.pTBins[1:]))/2
+        pTBinsAvg = (np.array(self.pTBins[0:-1])+np.array(self.pTBins[1:]))/2
         np.savetxt(self.outputFileName, np.transpose(
-            [ptBinsAvg, rst, err]), header=self.outputHeader())
+            [pTBinsAvg, rst, err]), header=self.outputHeader())
 
 class JetShapeAnalysis(JetAnalysisBase):
     def __init__(self, rBins, **kwargs):
