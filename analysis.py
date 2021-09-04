@@ -463,8 +463,8 @@ class MomentumFractionAnalysis(AnalysisBase):
         if np.sum(self.pThatEventCounts) == 0:
             return
 
-        rst = [0 for j in range(self.NptFractionBins)]
-        err = [0 for j in range(self.NptFractionBins)]
+        rst = [0 for j in range(self.NpTFractionBins)]
+        err = [0 for j in range(self.NpTFractionBins)]
         for pThat in range(self.NpThatBins):
             for pTFraction in range(self.NpTFractionBins):
                     if self.pThatEventCounts[pThat] > 0:
@@ -472,12 +472,12 @@ class MomentumFractionAnalysis(AnalysisBase):
                             self.pTFractionBins[pTFraction+1]-self.pTFractionBins[pTFraction])
                         rst[pTFraction] += self.countStorage[pThat][pTFraction] * \
                             self.pThatEventCrossSections[pThat]/normalizeFactor
-                        err[pTFractionBins] += self.countStorage[pThat][pTFraction] * \
+                        err[pTFraction] += self.countStorage[pThat][pTFraction] * \
                         self.pThatEventCrossSections[pThat]**2 / \
                         normalizeFactor**2
 
         err = [np.sqrt(x) for x in err]
-        pTBinsAvg = (np.array(self.pTBins[0:-1])+np.array(self.pTBins[1:]))/2
+        pTBinsAvg = (np.array(self.pTFractionBins[0:-1])+np.array(self.pTFractionBins[1:]))/2
         np.savetxt(self.outputFileName, np.transpose(
             [pTBinsAvg, rst, err]), header=self.outputHeader())
 
