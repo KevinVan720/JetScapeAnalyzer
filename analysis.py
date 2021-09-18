@@ -5,6 +5,7 @@ import os
 import sys
 import fnmatch
 import re
+import math
 from itertools import groupby
 import fastjet as fj
 import fjext
@@ -413,7 +414,7 @@ class CorrelationYieldAnalysis(AnalysisBase):
         np.savetxt(self.outputFileName, rst, header=self.outputHeader())
         
 class MomentumFractionAnalysis(AnalysisBase):
-    def __init__(self, ids1=[], ids2=[], pTFractionBins=[], useRap=False, pTCut1=None, pTCut2=None,rapidityCut1=None, etaCut1=None,rapidityCut2=None, etaCut2=None, **kwargs):
+    def __init__(self, ids1=[], ids2=[], pTFractionBins=[], useRap=False, pTCut1=None, pTCut2=None,rapidityCut1=None, etaCut1=None,rapidityCut2=None, etaCut2=None,deltaPhiCut=None, **kwargs):
         super().__init__(**kwargs)
         self.ids1=ids1
         self.ids2=ids2
@@ -429,6 +430,10 @@ class MomentumFractionAnalysis(AnalysisBase):
         self.etaCut1 = etaCut1
         self.rapidityCut2 = rapidityCut2
         self.etaCut2 = etaCut2
+        if deltaPhiCut:
+            self.deltaPhiCut=deltaPhiCut
+        else:
+            self.deltaPhiCut=math.pi
         self.countStorage = [[
             0 for i in range(self.NpTFractionBins)] for k in range(self.NpThatBins)]
 
@@ -453,7 +458,7 @@ class MomentumFractionAnalysis(AnalysisBase):
         
         for p1 in particles1:
             for p2 in particles2:
-                if p1!=p2:                
+                if p1!=p2 and min(abs(p1.phi-p2.phi),2*math.pi-abs(p1.phi-p2.phi))<self.deltaPhiCut:                
                     i= findIndex(self.pTFractionBins, p1.pT/p2.pT)
   
                     if i >= 0:

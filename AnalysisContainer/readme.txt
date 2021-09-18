@@ -1,0 +1,1 @@
+docker run -it -v ~/Research/JETSCAPE_WSU_analysis/JetScapeAnalyzer:/home/input/ -v ~/Research/JETSCAPE_WSU_analysis/JetScapeAnalyzer:/home/output/ 0439a5655e36 bash
