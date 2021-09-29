@@ -79,7 +79,7 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
         pTCut1=[2,4],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1=[411, -411, 421, -421, 413, -413, 423, -423],ids2=[22,-22], outputFileName=outputDir+"Dphoton_correlation"),
         
         CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[4,8],pTCut2=[2,4],etaCut1=[-4,4],etaCut2=[-2,2],ids1=[411, -411, 421, -421, 413, -413, 423, -423],ids2=[22,-22], outputFileName=outputDir+"Dphoton_correlation"),
+        pTCut1=[2,4],pTCut2=[4,8],etaCut1=[-4,4],etaCut2=[-2,2],ids1=[411, -411, 421, -421, 413, -413, 423, -423],ids2=[22,-22], outputFileName=outputDir+"Dphoton_correlation"),
 
         MomentumFractionAnalysis(pThatBins=pThatPair, pTFractionBins=list([0.1*x for x in range(101)]),
         pTCut1=[10,15],pTCut2=[0,10000],ids2=[411, -411, 421, -421, 413, -413, 423, -423],ids1=[22,-22], outputFileName=outputDir+"Dphoton_momentumFraction"),
@@ -88,10 +88,10 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
         pTCut1=[4,8],pTCut2=[0,10000],ids2=[411, -411, 421, -421, 413, -413, 423, -423],ids1=[22,-22], outputFileName=outputDir+"Dphoton_momentumFraction"),
 
         MomentumFractionAnalysis(pThatBins=pThatPair, pTFractionBins=list([0.1*x for x in range(101)]),
-        pTCut1=[10,15],pTCut2=[0,10000],ids2=[411, -411, 421, -421, 413, -413, 423, -423],ids1=[22,-22],deltaPhiCut=math.pi/5, outputFileName=outputDir+"Dphoton_momentumFraction"),
+        pTCut1=[10,15],pTCut2=[0,10000],ids2=[411, -411, 421, -421, 413, -413, 423, -423],ids1=[22,-22],deltaPhiCut=[4*math.pi/5,math.pi], outputFileName=outputDir+"Dphoton_momentumFraction"),
         
         MomentumFractionAnalysis(pThatBins=pThatPair, pTFractionBins=list([0.1*x for x in range(101)]),
-        pTCut1=[4,8],pTCut2=[0,10000],ids2=[411, -411, 421, -421, 413, -413, 423, -423],ids1=[22,-22],deltaPhiCut=math.pi/5, outputFileName=outputDir+"Dphoton_momentumFraction"),
+        pTCut1=[4,8],pTCut2=[0,10000],ids2=[411, -411, 421, -421, 413, -413, 423, -423],ids1=[22,-22],deltaPhiCut=[4*math.pi/5,math.pi], outputFileName=outputDir+"Dphoton_momentumFraction"),
         #etaYieldAnalysis(pThatBins=pThatPair, etaBins=list([-5+0.1*x for x in range(101)]),
         #                 ids=chargeHadronId, outputFileName=outputDir+"ch_eta_yield"),
         #etaYieldAnalysis(pThatBins=pThatPair, etaBins=list([-5+0.1*x for x in range(101)]), useRap=True,

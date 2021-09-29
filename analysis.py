@@ -433,7 +433,7 @@ class MomentumFractionAnalysis(AnalysisBase):
         if deltaPhiCut:
             self.deltaPhiCut=deltaPhiCut
         else:
-            self.deltaPhiCut=math.pi
+            self.deltaPhiCut=[0,math.pi]
         self.countStorage = [[
             0 for i in range(self.NpTFractionBins)] for k in range(self.NpThatBins)]
 
@@ -458,7 +458,8 @@ class MomentumFractionAnalysis(AnalysisBase):
         
         for p1 in particles1:
             for p2 in particles2:
-                if p1!=p2 and min(abs(p1.phi-p2.phi),2*math.pi-abs(p1.phi-p2.phi))<self.deltaPhiCut:                
+                deltaPhi=min(abs(p1.phi-p2.phi),2*math.pi-abs(p1.phi-p2.phi))
+                if p1!=p2 and deltaPhi>=self.deltaPhiCut[0] and deltaPhi<=self.deltaPhiCut[1]:                
                     i= findIndex(self.pTFractionBins, p1.pT/p2.pT)
   
                     if i >= 0:
