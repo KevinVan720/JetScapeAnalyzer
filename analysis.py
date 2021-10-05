@@ -10,9 +10,118 @@ from itertools import groupby
 import fastjet as fj
 import fjext
 from time import time
+#from pdxml_reader import *
 
 logDelta=0.000000001
 
+chargeHadronIds={-212212,
+ -212112,
+ -202212,
+ -202112,
+ -100211,
+ -5332,
+ -5222,
+ -5132,
+ -5112,
+ -4324,
+ -4322,
+ -4232,
+ -4224,
+ -4222,
+ -4214,
+ -4212,
+ -4122,
+ -3334,
+ -3314,
+ -3312,
+ -3224,
+ -3222,
+ -3114,
+ -3112,
+ -2224,
+ -2214,
+ -2212,
+ -1114,
+ -541,
+ -521,
+ -433,
+ -431,
+ -413,
+ -411,
+ -323,
+ -321,
+ -213,
+ -211,
+ -24,
+ -15,
+ -13,
+ -11,
+ 11,
+ 13,
+ 15,
+ 24,
+ 211,
+ 213,
+ 321,
+ 323,
+ 411,
+ 413,
+ 431,
+ 433,
+ 521,
+ 541,
+ 1114,
+ 2212,
+ 2214,
+ 2224,
+ 3112,
+ 3114,
+ 3222,
+ 3224,
+ 3312,
+ 3314,
+ 3334,
+ 4122,
+ 4212,
+ 4214,
+ 4222,
+ 4224,
+ 4232,
+ 4322,
+ 4324,
+ 5112,
+ 5132,
+ 5222,
+ 5332,
+ 100111,
+ 100211,
+ 202112,
+ 202212,
+ 212112,
+ 212212,
+ 1000010010,
+ 1000010020,
+ 1000010030,
+ 1000020030,
+ 1000020040,
+ 1000030070,
+ 1000040090,
+ 1000060120,
+ 1000060130,
+ 1000070140,
+ 1000080160,
+ 1000080180,
+ 1000100210,
+ 1000100220,
+ 1000110050,
+ 1000160330,
+ 1000180400,
+ 1000280560,
+ 1000541280,
+ 1000822080,
+ 1000862220}
+
+'''
 chargeHadronId = [211, 213, 9000211, 10213, 20213, 100211, 215, 9000213, 10211, 100213, 9010213, 10215,
  217, 30213, 9010211, 219, 321, 323, 10323, 20323, 100323, 10321, 325, 30323, 10325, 327, 20325, 329, 2212,
   12212, 2124, 22212, 32212, 2216, 12216, 22124, 42212, 32124, 2128, 1114, 2214, 2224, 31114, 32214, 32224,
@@ -27,6 +136,7 @@ chargeHadronId = [211, 213, 9000211, 10213, 20213, 100211, 215, 9000213, 10211, 
          -3224, -13112, -13222, -13114, -13224, -23112, -23222, -3116, -3226, -13116, -13226, -23114, -23224, -3118,
           -3228, -3312, -3314, -203312, -13314, -103316, -203316, -3334, -203338,
           411,-411,413,-413, 521,-521,523,-523]
+'''
 
 
 def weighted_avg_and_std(values, weights):
@@ -173,7 +283,7 @@ Assumption:
 '''
 
 class AnalysisBase:
-    def __init__(self, pThatBins=[], ids=[], status=[], outputFileName=""):
+    def __init__(self, pThatBins=[], ids=set(), status=[], outputFileName=""):
         self.outputFileName = outputFileName + \
             "_%04d" % random.randint(
                 0, 9999)+str(hash(type(self).__name__) % 1000)+".txt"
@@ -337,7 +447,7 @@ class pTYieldAnalysis(AnalysisBase):
             [ptBinsAvg, rst, err]), header=self.outputHeader())
 
 class CorrelationYieldAnalysis(AnalysisBase):
-    def __init__(self, ids1=[], ids2=[], etaBins=[],phiBins=[], useAnti=False, useRap=False, pTCut1=None, pTCut2=None,rapidityCut1=None, etaCut1=None,rapidityCut2=None, etaCut2=None, **kwargs):
+    def __init__(self, ids1=set(), ids2=set(), etaBins=[],phiBins=[], useAnti=False, useRap=False, pTCut1=None, pTCut2=None,rapidityCut1=None, etaCut1=None,rapidityCut2=None, etaCut2=None, **kwargs):
         super().__init__(**kwargs)
         self.ids1=ids1
         self.ids2=ids2
@@ -414,7 +524,7 @@ class CorrelationYieldAnalysis(AnalysisBase):
         np.savetxt(self.outputFileName, rst, header=self.outputHeader())
         
 class MomentumFractionAnalysis(AnalysisBase):
-    def __init__(self, ids1=[], ids2=[], pTFractionBins=[], useRap=False, pTCut1=None, pTCut2=None,rapidityCut1=None, etaCut1=None,rapidityCut2=None, etaCut2=None,deltaPhiCut=None, **kwargs):
+    def __init__(self, ids1=set(), ids2=set(), pTFractionBins=[], useRap=False, pTCut1=None, pTCut2=None,rapidityCut1=None, etaCut1=None,rapidityCut2=None, etaCut2=None,deltaPhiCut=None, **kwargs):
         super().__init__(**kwargs)
         self.ids1=ids1
         self.ids2=ids2

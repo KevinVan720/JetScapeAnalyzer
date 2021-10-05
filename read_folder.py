@@ -22,85 +22,73 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
 
     chpTBins=[0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4, 3.2, 4, 4.8, 5.6, 6.4, 7.2, 9.6, 12, 14.4, 19.2, 24, 28.8, 35.2, 41.6, 48, 60.8, 73.6, 86.4, 103.6, 120.8, 140, 165, 250, 400]
 
+    DmesonIds={411, -411, 421, -421, 413, -413, 423, -423}
+
 
     allAnalysis = [
         pTYieldAnalysis(pThatBins=pThatPair, pTBins=chpTBins,
-                        ids=chargeHadronId, etaCut=[-1, 1], outputFileName=outputDir+"ch_yield"),
-        pTYieldAnalysis(pThatBins=pThatPair, pTBins=chpTBins,
-                        ids=chargeHadronId, etaCut=[-0.5, 0.5], outputFileName=outputDir+"ch_yield"),
+                        ids=chargeHadronIds, etaCut=[-1, 1], outputFileName=outputDir+"ch_yield"),
+        #pTYieldAnalysis(pThatBins=pThatPair, pTBins=chpTBins,
+        #                ids=chargeHadronId, etaCut=[-0.5, 0.5], outputFileName=outputDir+"ch_yield"),
         #pTYieldAnalysis(pThatBins=pThatPair, pTBins=chpTBins,
         #                ids=chargeHadronId, etaCut=[-0.1, 0.1], outputFileName=outputDir+"ch_yield"),
 
-        pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
-                        ids=[421, -421], rapidityCut=[-1, 1], outputFileName=outputDir+"D0_yield"),
-        pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
-                        ids=[421, -421], rapidityCut=[-0.5, 0.5], outputFileName=outputDir+"D0_yield"),
+        #pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
+        #                ids={421, -421}, rapidityCut=[-1, 1], outputFileName=outputDir+"D0_yield"),
+        #pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
+        #                ids={421, -421}, rapidityCut=[-0.5, 0.5], outputFileName=outputDir+"D0_yield"),
         #pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
         #                ids=[421, -421], rapidityCut=[-0.1, 0.1], outputFileName=outputDir+"D0_yield"),
         pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100, 150, 200, 250, 300, 350, 400, 500],
-                        ids=[421, -421], rapidityCut=[-1, 1], outputFileName=outputDir+"D0_yield_high"),
+                        ids={421, -421}, rapidityCut=[-1, 1], outputFileName=outputDir+"D0_yield"),
 
-        pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
-                        ids=[411, -411, 421, -421, 413, -413, 423, -423], rapidityCut=[-1, 1], outputFileName=outputDir+"D_yield"),
-        pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
-                        ids=[411, -411, 421, -421, 413, -413, 423, -423], rapidityCut=[-0.5, 0.5], outputFileName=outputDir+"D_yield"),
+        #pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
+        #                ids={411, -411, 421, -421, 413, -413, 423, -423}, rapidityCut=[-1, 1], outputFileName=outputDir+"D_yield"),
+        #pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
+        #                ids={411, -411, 421, -421, 413, -413, 423, -423}, rapidityCut=[-0.5, 0.5], outputFileName=outputDir+"D_yield"),
         #pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100],
         #                ids=[421, -421], rapidityCut=[-0.1, 0.1], outputFileName=outputDir+"D0_yield"),
         pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100, 150, 200, 250, 300, 350, 400, 500],
-                        ids=[411, -411, 421, -421, 413, -413, 423, -423], rapidityCut=[-1, 1], outputFileName=outputDir+"D_yield_high"),
+                        ids=DmesonIds, rapidityCut=[-1, 1], outputFileName=outputDir+"D_yield"),
 
         CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[10,15],pTCut2=[8,12],ids1=[421,-421],ids2=[421,-421],useAnti=True, outputFileName=outputDir+"D0D0bar_correlation"),
+        pTCut1=[10,15],pTCut2=[8,12],ids1={421,-421},ids2={421,-421},useAnti=True, outputFileName=outputDir+"D0D0bar_correlation"),
         CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[4,6],pTCut2=[2,5],ids1=[421,-421],ids2=[421,-421],useAnti=True, outputFileName=outputDir+"D0D0bar_correlation"),
+        pTCut1=[4,6],pTCut2=[2,5],ids1={421,-421},ids2={421,-421},useAnti=True, outputFileName=outputDir+"D0D0bar_correlation"),
+
 
         CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[10,15],pTCut2=[8,12],ids1=[411,-411],ids2=[411,-411],useAnti=True, outputFileName=outputDir+"D+D+bar_correlation"),
+        pTCut1=[10,15],pTCut2=[8,12],ids1=DmesonIds,ids2=DmesonIds,useAnti=True, outputFileName=outputDir+"DDbar_correlation"),
         CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[4,6],pTCut2=[2,5],ids1=[411,-411],ids2=[411,-411],useAnti=True, outputFileName=outputDir+"D+D+bar_correlation"),
-
+        pTCut1=[4,6],pTCut2=[2,5],ids1=DmesonIds,ids2=DmesonIds,useAnti=True, outputFileName=outputDir+"DDbar_correlation"),
         CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[10,15],pTCut2=[8,12],ids1=[413,-413],ids2=[413,-413],useAnti=True, outputFileName=outputDir+"D+*D+*bar_correlation"),
+        pTCut1=[10,15],pTCut2=[2,5],ids1=DmesonIds,ids2=DmesonIds,useAnti=True, outputFileName=outputDir+"DDbar_correlation"),
         CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[4,6],pTCut2=[2,5],ids1=[413,-413],ids2=[413,-413],useAnti=True, outputFileName=outputDir+"D+*D+*bar_correlation"),
-
-        CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[10,15],pTCut2=[8,12],ids1=[423,-423],ids2=[423,-423],useAnti=True, outputFileName=outputDir+"D0*D0*bar_correlation"),
-        CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[4,6],pTCut2=[2,5],ids1=[423,-423],ids2=[423,-423],useAnti=True, outputFileName=outputDir+"D0*D0*bar_correlation"),
-
-        CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[10,15],pTCut2=[8,12],ids1=[411, -411, 421, -421, 413, -413, 423, -423],ids2=[411, -411, 421, -421, 413, -413, 423, -423],useAnti=True, outputFileName=outputDir+"DDbar_correlation"),
-        CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[4,6],pTCut2=[2,5],ids1=[411, -411, 421, -421, 413, -413, 423, -423],ids2=[411, -411, 421, -421, 413, -413, 423, -423],useAnti=True, outputFileName=outputDir+"DDbar_correlation"),
-        CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[10,15],pTCut2=[2,5],ids1=[411, -411, 421, -421, 413, -413, 423, -423],ids2=[411, -411, 421, -421, 413, -413, 423, -423],useAnti=True, outputFileName=outputDir+"DDbar_correlation"),
-        CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[8,12],pTCut2=[4,6],ids1=[411, -411, 421, -421, 413, -413, 423, -423],ids2=[411, -411, 421, -421, 413, -413, 423, -423],useAnti=True, outputFileName=outputDir+"DDbar_correlation"),
+        pTCut1=[8,12],pTCut2=[4,6],ids1=DmesonIds,ids2=DmesonIds,useAnti=True, outputFileName=outputDir+"DDbar_correlation"),
         
         CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[4,8],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1=[421,-421],ids2=[22,-22], outputFileName=outputDir+"D0photon_correlation"),
+        pTCut1=[4,8],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1={421,-421},ids2={22,-22}, outputFileName=outputDir+"D0photon_correlation"),
 
         CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[4,8],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1=[411, -411, 421, -421, 413, -413, 423, -423],ids2=[22,-22], outputFileName=outputDir+"Dphoton_correlation"),
+        pTCut1=[4,8],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1=DmesonIds,ids2={22,-22}, outputFileName=outputDir+"Dphoton_correlation"),
         
         CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[2,4],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1=[411, -411, 421, -421, 413, -413, 423, -423],ids2=[22,-22], outputFileName=outputDir+"Dphoton_correlation"),
+        pTCut1=[2,4],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1=DmesonIds,ids2={22,-22}, outputFileName=outputDir+"Dphoton_correlation"),
         
         CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        pTCut1=[2,4],pTCut2=[4,8],etaCut1=[-4,4],etaCut2=[-2,2],ids1=[411, -411, 421, -421, 413, -413, 423, -423],ids2=[22,-22], outputFileName=outputDir+"Dphoton_correlation"),
+        pTCut1=[2,4],pTCut2=[4,8],etaCut1=[-4,4],etaCut2=[-2,2],ids1=DmesonIds,ids2={22,-22}, outputFileName=outputDir+"Dphoton_correlation"),
 
         MomentumFractionAnalysis(pThatBins=pThatPair, pTFractionBins=list([0.1*x for x in range(101)]),
-        pTCut1=[10,15],pTCut2=[0,10000],ids2=[411, -411, 421, -421, 413, -413, 423, -423],ids1=[22,-22], outputFileName=outputDir+"Dphoton_momentumFraction"),
+        pTCut1=[10,15],pTCut2=[0,10000],ids2=DmesonIds,ids1={22,-22}, outputFileName=outputDir+"Dphoton_momentumFraction"),
         
         MomentumFractionAnalysis(pThatBins=pThatPair, pTFractionBins=list([0.1*x for x in range(101)]),
-        pTCut1=[4,8],pTCut2=[0,10000],ids2=[411, -411, 421, -421, 413, -413, 423, -423],ids1=[22,-22], outputFileName=outputDir+"Dphoton_momentumFraction"),
+        pTCut1=[4,8],pTCut2=[0,10000],ids2=DmesonIds,ids1={22,-22}, outputFileName=outputDir+"Dphoton_momentumFraction"),
 
         MomentumFractionAnalysis(pThatBins=pThatPair, pTFractionBins=list([0.1*x for x in range(101)]),
-        pTCut1=[10,15],pTCut2=[0,10000],ids2=[411, -411, 421, -421, 413, -413, 423, -423],ids1=[22,-22],deltaPhiCut=[4*math.pi/5,math.pi], outputFileName=outputDir+"Dphoton_momentumFraction"),
+        pTCut1=[10,15],pTCut2=[0,10000],ids2=DmesonIds,ids1={22,-22},deltaPhiCut=[4*math.pi/5,math.pi], outputFileName=outputDir+"Dphoton_momentumFraction"),
         
         MomentumFractionAnalysis(pThatBins=pThatPair, pTFractionBins=list([0.1*x for x in range(101)]),
-        pTCut1=[4,8],pTCut2=[0,10000],ids2=[411, -411, 421, -421, 413, -413, 423, -423],ids1=[22,-22],deltaPhiCut=[4*math.pi/5,math.pi], outputFileName=outputDir+"Dphoton_momentumFraction"),
+        pTCut1=[4,8],pTCut2=[0,10000],ids2=DmesonIds,ids1={22,-22},deltaPhiCut=[4*math.pi/5,math.pi], outputFileName=outputDir+"Dphoton_momentumFraction"),
         #etaYieldAnalysis(pThatBins=pThatPair, etaBins=list([-5+0.1*x for x in range(101)]),
         #                 ids=chargeHadronId, outputFileName=outputDir+"ch_eta_yield"),
         #etaYieldAnalysis(pThatBins=pThatPair, etaBins=list([-5+0.1*x for x in range(101)]), useRap=True,

@@ -1,0 +1,28 @@
+<chapter name="Particle Names">
+
+  <!-- For selected particles it is possible to specify the C++ class
+       names "classname" for a specific unique PDG codes
+       
+       This overwrites the default from Pythia8 ParticleData.xml
+
+       If needed, also the text-output form for particles 
+       can be changed using "name"
+        -->
+  
+  <particle pdgID="0" classname="Unknown"/> <!-- VOID in Pythia8 -->
+  
+  <particle pdgID="11" classname="Electron"/>
+  <particle pdgID="-11" classname="Positron"/>
+  <particle pdgID="22" classname="Photon" name="photon"/>
+
+  <particle pdgID="130" classname="K0Long"/>
+  <particle pdgID="310" classname="K0Short"/>
+
+  <particle pdgID="2112" classname="Neutron"/>
+  <particle pdgID="-2112" classname="AntiNeutron"/>
+
+  <particle pdgID="2212" classname="Proton"/>
+  <particle pdgID="-2212" classname="AntiProton"/>
+
+</chapter>
+
