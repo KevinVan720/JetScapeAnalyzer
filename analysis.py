@@ -203,8 +203,9 @@ class Particle:
 
 
 class JetScapeReader:
-    def __init__(self, fileName, pTMin=0.1):
+    def __init__(self, fileName, headerName=None, pTMin=0.1):
         self.fileName = fileName
+        self.headerName = headerName
 
         self.pTMin=pTMin
         self.currentEventCount = 0
@@ -212,7 +213,7 @@ class JetScapeReader:
         self.currentHydroInfo = []
         self.particleList = []
 
-    def readEventHeader(self, strlist):
+    def parseEventHeader(self, strlist):
         '''
         currently only support a single header format
         with event cross section and hydro flow information
@@ -234,16 +235,27 @@ class JetScapeReader:
             self.currentEventCount += 1
 
     def readAllEvents(self):
+        if self.headerName!=None:
+            hf=open(self.headerName, "r", 32768)
         with open(self.fileName, "r", 32768) as f:
             for line in f:
                 strlist = line.rstrip().split()
                 if line.startswith("#"):   # A new event
                     if len(self.particleList) == 0:
-                        self.readEventHeader(strlist)
+                        if self.headerName!=None:
+                            headerlist=hf.readline().rstrip().split()
+                            self.parseEventHeader(headerlist)
+                        else:
+                            self.parseEventHeader(strlist)
                         continue
 
                     yield self.particleList
-                    self.readEventHeader(strlist)
+                    if self.headerName!=None:
+                        headerlist=hf.readline().rstrip().split()
+                        self.parseEventHeader(headerlist)
+                    else:
+                        self.parseEventHeader(strlist)
+                    #self.parseEventHeader(strlist)
                     self.particleList.clear()
 
                 else:
