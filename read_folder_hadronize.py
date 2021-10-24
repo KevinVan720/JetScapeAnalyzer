@@ -163,17 +163,16 @@ if __name__ == "__main__":
     inputDir = sys.argv[1]+"/"
     outputDir = sys.argv[2]+"/"
     batchIndex = int(sys.argv[3])
-    headerDir=inputDir+"/../"
 
     num_cores = multiprocessing.cpu_count()
 
-    allFiles = os.listdir(inputDir)
+    allFiles = os.listdir(inputDir+"/"+sys.argv[4])
     # files stores all the event output hadrons
     allFiles = [file for file in allFiles if fnmatch.fnmatch(
         file, "*Hadrons*.dat")]
     allFiles.sort()
 
-    allHeaderFiles = os.listdir(headerDir)
+    allHeaderFiles = os.listdir(inputDir)
     # files stores all the event output hadrons
     allHeaderFiles = [file for file in allHeaderFiles if fnmatch.fnmatch(
         file, "*Header*.dat")]

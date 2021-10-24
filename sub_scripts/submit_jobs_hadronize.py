@@ -1,5 +1,6 @@
 import numpy as np
-import os, sys
+import os
+import sys
 from os import path
 import pathlib
 import h5py
@@ -10,21 +11,22 @@ import re
 from itertools import groupby
 import time
 
-homeDir="/tier2/home/groups/jetscape/gy8046/"
+homeDir = "/tier2/home/groups/jetscape/gy8046/"
 
-baseDir=str(pathlib.Path(__file__).parent.absolute())+"/"
+baseDir = str(pathlib.Path(__file__).parent.absolute())+"/"
 
-dir_name=baseDir.replace("/Analysis","")+"OutputFiles/"
+dir_name = baseDir.replace("/Analysis", "")+"OutputFiles/"
 
-batchIndex=range(0,100,10)
+batchIndex = range(0, 100, 10)
 
-queueType="primary"
+queueType = "primary"
 
-def run_analysis(inputDir, OutputDir, batch):
+
+def run_analysis(inputDir, OutputDir, suffix, batch):
     os.makedirs(OutputDir, exist_ok=True)
-    os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/*.py "+ OutputDir) 
-    os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/work*.sh "+ OutputDir)
-    
+    os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/*.py " + OutputDir)
+    os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/work*.sh " + OutputDir)
+
     subFileName = OutputDir+"sub_job" + ".sh"
     subFile = open(subFileName, "w")
     subFile.writelines("#!/usr/bin/env bash\n")
@@ -42,10 +44,12 @@ def run_analysis(inputDir, OutputDir, batch):
         + inputDir
         + ":/home/input/,"
         + OutputDir
-        + ":/home/output/" 
-        +" "+homeDir+"Analysis/jetscape_analysis_latest.sif"
-        +" bash /home/output/work_hadronize.sh "
+        + ":/home/output/"
+        + " "+homeDir+"Analysis/jetscape_analysis_latest.sif"
+        + " bash /home/output/work_hadronize.sh "
         + str(batch)
+        + " "
+        + suffix
         + " 1> "+OutputDir+"RUN_"
         + str(batch)
         + ".log 2> "+OutputDir+"RUN_"
@@ -56,7 +60,8 @@ def run_analysis(inputDir, OutputDir, batch):
     subFile.close()
 
     # Now, submit file
-    os.system("cd " + OutputDir + " && sbatch " + subFileName + " > " + subFileName + ".out")
+    os.system("cd " + OutputDir + " && sbatch " +
+              subFileName + " > " + subFileName + ".out")
 
     # ...and wait a few seconds, so as not to overwhelm the scheduler
     time.sleep(0.5)
@@ -64,11 +69,9 @@ def run_analysis(inputDir, OutputDir, batch):
 
 for batch in batchIndex:
 
-    jobFolder=baseDir+"RUN_"+str(batch)+"/"
+    jobFolder = baseDir+"RUN_"+str(batch)+"/"
     os.makedirs(jobFolder, exist_ok=True)
 
-    run_analysis(dir_name+"/light/", jobFolder+"/light/", batch)
-    run_analysis(dir_name+"/D/", jobFolder+"/D/", batch)
-    run_analysis(dir_name+"/DB/", jobFolder+"/DB/", batch)
-
-    
+    run_analysis(dir_name, jobFolder+"/light/", "light", batch)
+    run_analysis(dir_name, jobFolder+"/D/",  "light", batch)
+    run_analysis(dir_name, jobFolder+"/DB/", "light", batch)
