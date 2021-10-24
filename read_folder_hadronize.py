@@ -134,10 +134,10 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
                 file for file in allFiles if batchString in file and pThatString in file]
             headerFiles= [
                 headerFile for headerFile in allHeaderFiles if batchString in headerFile and pThatString in headerFile]
-            for (i,fileName) in enumerate(files):
+            for fileName in files:
 
                 # reading a certain file, add one event number as we encounter line starting with #
-                reader = JetScapeReader(inputDir+fileName, headerName=headerFiles[i])
+                reader = JetScapeReader(inputDir+fileName, headerName=headerFiles[0])
                 for hadrons in reader.readAllEvents():
                     for analysis in allAnalysis:
 
