@@ -137,7 +137,7 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
             for fileName in files:
 
                 # reading a certain file, add one event number as we encounter line starting with #
-                reader = JetScapeReader(inputDir+fileName, headerName=headerFiles[0])
+                reader = JetScapeReader(inputDir+"/"+sys.argv[4]+fileName, headerName=inputDir+headerFiles[0])
                 for hadrons in reader.readAllEvents():
                     for analysis in allAnalysis:
 
