@@ -39,7 +39,7 @@ def run_analysis(inputDir, OutputDir, batch):
 
     subFile.writelines(
         "singularity run -B "
-        + intputDir
+        + inputDir
         + ":/home/input/,"
         + OutputDir
         + ":/home/output/" 
