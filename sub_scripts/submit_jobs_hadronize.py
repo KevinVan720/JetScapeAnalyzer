@@ -73,5 +73,5 @@ for batch in batchIndex:
     os.makedirs(jobFolder, exist_ok=True)
 
     run_analysis(dir_name, jobFolder+"/light/", "light", batch)
-    run_analysis(dir_name, jobFolder+"/D/",  "light", batch)
-    run_analysis(dir_name, jobFolder+"/DB/", "light", batch)
+    run_analysis(dir_name, jobFolder+"/D/",  "D", batch)
+    run_analysis(dir_name, jobFolder+"/DB/", "DB", batch)
