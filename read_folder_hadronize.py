@@ -154,7 +154,7 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
 
                         analysis.analyzeEvent(hadrons)
                 
-                os.remove(inputDir+"/"+sys.argv[4]+fileName)
+                os.remove(inputDir+"/"+sys.argv[4]+"/"+fileName)
 
     for analysis in allAnalysis:
         analysis.outputResult()
