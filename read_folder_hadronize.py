@@ -153,6 +153,8 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
                             analysis.setCrossSection(pThatIndex, sigma)
 
                         analysis.analyzeEvent(hadrons)
+                
+                os.remove(inputDir+"/"+sys.argv[4]+fileName)
 
     for analysis in allAnalysis:
         analysis.outputResult()
