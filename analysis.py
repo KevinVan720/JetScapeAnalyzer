@@ -437,7 +437,10 @@ class pTYieldAnalysis(AnalysisBase):
             i = findIndex(self.pTBins, p.pT)
 
             if i >= 0:
-                self.countStorage[self.pThatIndex][i] += 1
+                if p.status>=0:
+                    self.countStorage[self.pThatIndex][i] += 1
+                if p.status<0:
+                    self.countStorage[self.pThatIndex][i] -= 1
 
     def outputResult(self):
         if np.sum(self.pThatEventCounts) == 0:
