@@ -244,6 +244,7 @@ class JetScapeReader:
                     if len(self.particleList) == 0:
                         if self.headerName!=None:
                             headerlist=hf.readline().rstrip().split()
+                            #print(headerlist)
                             self.parseEventHeader(headerlist)
                         else:
                             self.parseEventHeader(strlist)
@@ -253,6 +254,8 @@ class JetScapeReader:
                     if self.headerName!=None:
                         headerlist=hf.readline().rstrip().split()
                         self.parseEventHeader(headerlist)
+                        #print(headerlist)
+
                     else:
                         self.parseEventHeader(strlist)
                     #self.parseEventHeader(strlist)
