@@ -181,6 +181,19 @@ def rap(a, b):
     return 0.5 * np.log((a + b + logDelta) /
                         (abs(a - b) + logDelta))
 
+#currently only supports status code of 0 and -1!!!
+def saveParticleInfo(pid,status):
+    sign=pid/abs(pid)
+    
+    return (abs(pid)*100+abs(status))*sign
+
+def loadParticleInfo(a):
+    sign=int(a/abs(a))
+    base=(abs(a)//100)*100
+    status=-(abs(a)-base)
+    pid=(a-status)/100
+    return (int(pid),int(status))
+
 class Particle:
     def __init__(self, pid, status, E, px, py, pz):
         self.pid = pid
@@ -193,6 +206,7 @@ class Particle:
         self.y = rap(E,pz)
         self.eta = rap(np.sqrt(px**2+py**2+pz**2), pz)
         self.phi = np.arctan2(py, px)
+
 
     def __eq__(self, other): 
         if not isinstance(other, Particle):
@@ -365,7 +379,7 @@ class JetAnalysisBase(AnalysisBase):
         fj_particles = [fj.PseudoJet(
             hadron.px, hadron.py, hadron.pz, hadron.E) for hadron in hadrons]
         for i in range(len(fj_particles)):
-            fj_particles[i].set_user_index(int(hadrons[i].pid))
+            fj_particles[i].set_user_index(int(saveParticleInfo(hadrons[i].pid, hadrons[i].status)))
 
         return fj_particles
 
@@ -439,7 +453,7 @@ class pTYieldAnalysis(AnalysisBase):
             if i >= 0:
                 if p.status>=0:
                     self.countStorage[self.pThatIndex][i] += 1
-                if p.status<0:
+                if p.status<0 and self.countStorage[self.pThatIndex][i]>0:
                     self.countStorage[self.pThatIndex][i] -= 1
 
     def outputResult(self):
@@ -634,11 +648,16 @@ class JetShapeAnalysis(JetAnalysisBase):
         for jet in jets_selected:
             constituents = jet.constituents()
             for hadron in constituents:
+                pid, status=loadParticleInfo(hadron.user_index())
                 dr = np.sqrt((hadron.eta()-jet.eta())**2 +
                              (hadron.phi()-jet.phi())**2)
                 i = findIndex(self.rBins, dr)
                 if i > 0:
-                    self.countStorage[self.pThatIndex][i] += hadron.pt() / \
+                    if status>=0:
+                        self.countStorage[self.pThatIndex][i] += hadron.pt() / \
+                        jet.pt()
+                    else:
+                        self.countStorage[self.pThatIndex][i] -= hadron.pt() / \
                         jet.pt()
 
     def outputResult(self):
@@ -676,7 +695,14 @@ class InclusiveJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
         jets_selected = self.jetSelector(jets)
 
         for jet in jets_selected:
-            i = findIndex(self.pTBins, jet.pt())
+            jetpT=jet.pt()
+            constituents = jet.constituents()
+            for hadron in constituents:
+                pid, status=loadParticleInfo(hadron.user_index())
+                if status<0:
+                    jetpT-=hadron.pt()
+
+            i = findIndex(self.pTBins, jetpT)
             if i >= 0:
                 self.countStorage[self.pThatIndex][i] += 1
 
@@ -696,17 +722,24 @@ class HeavyJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
         jets = fj.sorted_by_pt(cs.inclusive_jets())
         jets_selected = self.jetSelector(jets)
 
-        fjHadrons = [hadron for hadron in fjHadrons if hadron.user_index() in self.ids
+        fjHadrons = [hadron for hadron in fjHadrons if loadParticleInfo(hadron.user_index())[0] in self.ids
                      and withinInterval(hadron.pt(), self.heavypTCut)
                      and withinInterval(hadron.eta(), self.heavyEtaCut)
                      and withinInterval(hadron.rap(), self.heavyRapidityCut)]
 
         for jet in jets_selected:
+            jetpT=jet.pt()
+            constituents = jet.constituents()
+            for hadron in constituents:
+                pid, status=loadParticleInfo(hadron.user_index())
+                if status<0:
+                    jetpT-=hadron.pt()
+
             for hadron in fjHadrons:
                 dr = np.sqrt((hadron.eta()-jet.eta())**2 +
                              (hadron.phi()-jet.phi())**2)
                 if dr < self.drCut:
-                    i = findIndex(self.pTBins, jet.pt())
+                    i = findIndex(self.pTBins, jetpT)
                     if i >= 0:
                         self.countStorage[self.pThatIndex][i] += 1
                         break
