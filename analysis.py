@@ -352,11 +352,12 @@ class AnalysisBase:
 
 
 class JetAnalysisBase(AnalysisBase):
-    def __init__(self, jetRadius=0.4, jetpTMin=1, jetRapidityCut=None, jetEtaCut=None, **kwargs):
+    def __init__(self, jetRadius=0.4, jetpTMin=1, jetpTMax=None, jetRapidityCut=None, jetEtaCut=None, **kwargs):
         super().__init__(**kwargs)
         self.clusterPower = -1
         self.jetRadius = jetRadius
         self.jetpTMin = jetpTMin
+        self.jetpTMax=jetpTMax
         self.jetRapidityCut = jetRapidityCut
         self.jetEtaCut = jetEtaCut
 
@@ -365,6 +366,9 @@ class JetAnalysisBase(AnalysisBase):
                 fj.antikt_algorithm, self.jetRadius)
 
         self.jetSelector = fj.SelectorPtMin(self.jetpTMin)
+        if self.jetpTMax!= None:
+            self.jetSelector = self.jetSelector & fj.SelectorPtMax(
+                self.jetpTMax)
         if self.jetRapidityCut != None:
             self.jetSelector = self.jetSelector & fj.SelectorRapRange(
                 self.jetRapidityCut[0], self.jetRapidityCut[1])
@@ -673,6 +677,63 @@ class JetShapeAnalysis(JetAnalysisBase):
                     rst[pT] += self.countStorage[pThat][pT] * \
                         self.pThatEventCrossSections[pThat]/normalizeFactor
                     err[pT] += self.countStorage[pThat][pT] * \
+                        self.pThatEventCrossSections[pThat]**2 / \
+                        normalizeFactor**2
+
+        err = [np.sqrt(x) for x in err]
+        ptBinsAvg = (np.array(self.rBins[0:-1])+np.array(self.rBins[1:]))/2
+        np.savetxt(self.outputFileName, np.transpose(
+            [ptBinsAvg, rst, err]), header=self.outputHeader())
+
+class JetFragmentationFunctionAnalysis(JetAnalysisBase):
+    def __init__(self, bins, usepT=True, **kwargs):
+        super().__init__(**kwargs)
+        self.bins = bins
+        self.NBins = len(self.bins)-1
+
+        self.countStorage = [
+            [0 for j in range(self.NBins)] for i in range(self.NpThatBins)]
+
+    def analyzeEvent(self, particles):
+
+        fjHadrons = self.fillFastJetConstituents(particles)
+        cs = fj.ClusterSequence(fjHadrons, self.jetDefinition)
+        jets = fj.sorted_by_pt(cs.inclusive_jets())
+        jets_selected = self.jetSelector(jets)
+
+        Njet=len(jets_selected)
+
+        for jet in jets_selected:
+            constituents = jet.constituents()
+            for hadron in constituents:
+                pid, status=loadParticleInfo(hadron.user_index())
+                dr = np.sqrt((hadron.eta()-jet.eta())**2 +
+                             (hadron.phi()-jet.phi())**2)
+                z=hadron.pt()*np.cos(dr)/jet.pt()
+                if self.usepT:
+                    i = findIndex(self.rBins, hadron.pt())
+                else:
+                    i = findIndex(self.rBins, z)
+                if i > 0:
+                    diff=self.bins[i+1]-self.bins[i]
+                    if status>=0:
+                        self.countStorage[self.pThatIndex][i] += 1/diff/Njet
+                    else:
+                        self.countStorage[self.pThatIndex][i] -= 1/diff/Njet
+
+    def outputResult(self):
+        if np.sum(self.pThatEventCounts) == 0:
+            return
+
+        rst = [0 for j in range(self.NrBins)]
+        err = [0 for j in range(self.NrBins)]
+        for pThat in range(self.NpThatBins):
+            for i in range(self.NBins):
+                if self.pThatEventCounts[pThat] > 0:
+                    normalizeFactor = self.pThatEventCounts[pThat]
+                    rst[i] += self.countStorage[pThat][i] * \
+                        self.pThatEventCrossSections[pThat]/normalizeFactor
+                    err[i] += self.countStorage[pThat][i] * \
                         self.pThatEventCrossSections[pThat]**2 / \
                         normalizeFactor**2
 
