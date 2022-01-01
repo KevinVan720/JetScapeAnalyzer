@@ -109,10 +109,23 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
         
         # FlowAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 15, 20, 40],
         #             ids=[411, -411, 421, -421, 413, -413, 423, -423], rapidityCut=[-1, 1], outputFileName=outputDir+"D0_v2"),
-        
+
+        InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[100,112,125,141,158,177,199,223,251,281,316,354,398,501,630,999],
+                                    jetRadius=0.2, jetpTMin=1, jetRapidityCut=[-2.8, 2.8],
+                                    outputFileName=outputDir+"inclusiveJet_yield"),
+
+        InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[100,112,125,141,158,177,199,223,251,281,316,354,398,501,630,999],
+                                    jetRadius=0.3, jetpTMin=1, jetRapidityCut=[-2.8, 2.8],
+                                    outputFileName=outputDir+"inclusiveJet_yield"),
+
         InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[100,112,125,141,158,177,199,223,251,281,316,354,398,501,630,999],
                                     jetRadius=0.4, jetpTMin=1, jetRapidityCut=[-2.8, 2.8],
                                     outputFileName=outputDir+"inclusiveJet_yield"),
+        
+        InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[100,112,125,141,158,177,199,223,251,281,316,354,398,501,630,999],
+                                    jetRadius=0.5, jetpTMin=1, jetRapidityCut=[-2.8, 2.8],
+                                    outputFileName=outputDir+"inclusiveJet_yield"),
+
         JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[0.00794328,0.01,0.0125893,0.158489,0.199526,0.0251189,0.0316228,0.0398107,0.0501187,0.0630957,0.0794328,0.1,0.125893,0.158489,0.199526,0.251189,0.316228,0.398107,0.501187,0.630958,0.794329,1],
         usepT=False,jetRadius=0.4,jetpTMin=126,jetpTMax=158,jetRapidityCut=[-2.1, 2.1],outputFileName=outputDir+"fragmentation_function"),
         JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[0.00794328,0.01,0.0125893,0.158489,0.199526,0.0251189,0.0316228,0.0398107,0.0501187,0.0630957,0.0794328,0.1,0.125893,0.158489,0.199526,0.251189,0.316228,0.398107,0.501187,0.630958,0.794329,1],

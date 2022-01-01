@@ -691,6 +691,8 @@ class JetFragmentationFunctionAnalysis(JetAnalysisBase):
         self.bins = bins
         self.NBins = len(self.bins)-1
 
+        self.usepT=usepT
+
         self.countStorage = [
             [0 for j in range(self.NBins)] for i in range(self.NpThatBins)]
 
