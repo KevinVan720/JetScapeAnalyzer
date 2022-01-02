@@ -713,9 +713,9 @@ class JetFragmentationFunctionAnalysis(JetAnalysisBase):
                              (hadron.phi()-jet.phi())**2)
                 z=hadron.pt()*np.cos(dr)/jet.pt()
                 if self.usepT:
-                    i = findIndex(self.rBins, hadron.pt())
+                    i = findIndex(self.bins, hadron.pt())
                 else:
-                    i = findIndex(self.rBins, z)
+                    i = findIndex(self.bins, z)
                 if i > 0:
                     diff=self.bins[i+1]-self.bins[i]
                     if status>=0:
@@ -727,8 +727,8 @@ class JetFragmentationFunctionAnalysis(JetAnalysisBase):
         if np.sum(self.pThatEventCounts) == 0:
             return
 
-        rst = [0 for j in range(self.NrBins)]
-        err = [0 for j in range(self.NrBins)]
+        rst = [0 for j in range(self.NBins)]
+        err = [0 for j in range(self.NBins)]
         for pThat in range(self.NpThatBins):
             for i in range(self.NBins):
                 if self.pThatEventCounts[pThat] > 0:
@@ -740,7 +740,7 @@ class JetFragmentationFunctionAnalysis(JetAnalysisBase):
                         normalizeFactor**2
 
         err = [np.sqrt(x) for x in err]
-        ptBinsAvg = (np.array(self.rBins[0:-1])+np.array(self.rBins[1:]))/2
+        ptBinsAvg = (np.array(self.bins[0:-1])+np.array(self.bins[1:]))/2
         np.savetxt(self.outputFileName, np.transpose(
             [ptBinsAvg, rst, err]), header=self.outputHeader())
 
