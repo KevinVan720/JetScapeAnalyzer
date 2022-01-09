@@ -698,6 +698,9 @@ class JetFragmentationFunctionAnalysis(JetAnalysisBase):
 
     def analyzeEvent(self, particles):
 
+        holes=[x for x in particles if x.status<0]
+        particles=[x for x in particles if x.status>=0]
+
         fjHadrons = self.fillFastJetConstituents(particles)
         cs = fj.ClusterSequence(fjHadrons, self.jetDefinition)
         jets = fj.sorted_by_pt(cs.inclusive_jets())
@@ -718,10 +721,21 @@ class JetFragmentationFunctionAnalysis(JetAnalysisBase):
                     i = findIndex(self.bins, z)
                 if i > 0:
                     diff=self.bins[i+1]-self.bins[i]
-                    if status>=0:
-                        self.countStorage[self.pThatIndex][i] += 1/diff/Njet
-                    else:
-                        self.countStorage[self.pThatIndex][i] -= 1/diff/Njet
+                    self.countStorage[self.pThatIndex][i] += 1/diff/Njet
+
+            for hole in holes:
+                dr = np.sqrt((hole.eta-jet.eta())**2 +
+                             (hole.phi-jet.phi())**2)
+                z=hole.pT*np.cos(dr)/jet.pt()
+                if self.usepT:
+                    i = findIndex(self.bins, hole.pT)
+                else:
+                    i = findIndex(self.bins, z)
+                if i > 0:
+                    diff=self.bins[i+1]-self.bins[i]
+                    self.countStorage[self.pThatIndex][i] -= 1/diff/Njet
+
+
 
     def outputResult(self):
         if np.sum(self.pThatEventCounts) == 0:
@@ -751,6 +765,9 @@ class InclusiveJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
 
     def analyzeEvent(self, particles):
 
+        holes=[x for x in particles if x.status<0]
+        particles=[x for x in particles if x.status>=0]
+
         fjHadrons = self.fillFastJetConstituents(particles)
 
         cs = fj.ClusterSequence(fjHadrons, self.jetDefinition)
@@ -760,10 +777,11 @@ class InclusiveJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
         for jet in jets_selected:
             jetpT=jet.pt()
             constituents = jet.constituents()
-            for hadron in constituents:
-                pid, status=loadParticleInfo(hadron.user_index())
-                if status<0:
-                    jetpT-=hadron.pt()
+            for hole in holes:
+                dr = np.sqrt((hole.eta-jet.eta())**2 +
+                             (hole.phi-jet.phi())**2)
+                if dr<=self.jetRadius:
+                    jetpT-=hole.pT
 
             i = findIndex(self.pTBins, jetpT)
             if i >= 0:
