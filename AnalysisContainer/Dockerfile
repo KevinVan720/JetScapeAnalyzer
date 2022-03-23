@@ -75,10 +75,11 @@ RUN curl -SL http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.1.1.tar.gz | tar -
 ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
 
 # Install Pythia8 (8.235 is needed by SMASH, and it should be installed in a folder called pythia8235)
-RUN curl -SL http://home.thep.lu.se/~torbjorn/pythia8/pythia8235.tgz \
-| tar -xvzC /usr/local \
-&& cd /usr/local/pythia8235 \
-&& ./configure --enable-shared --prefix=/usr/local/pythia8235 --with-hepmc3=/usr/local/HepMC3-3.1.1 \
+RUN wget -P /usr/local/ https://pythia.org/download/pythia82/pythia8245.tgz \
+&& cd /usr/local \
+&& tar xvfz /usr/local/pythia8245.tgz \
+&& cd /usr/local/pythia8245 \
+&& ./configure --enable-shared --prefix=/usr/local/pythia8245 --with-hepmc3=/usr/local/HepMC3-3.1.1 \
 && make -j8 \
 && make -j8 install
 
@@ -87,8 +88,8 @@ ARG username=jetscape-user
 ENV JETSCAPE_DIR="/home/${username}/JETSCAPE"
 ENV SMASH_DIR="${JETSCAPE_DIR}/external_packages/smash/smash_code"
 ENV EIGEN3_ROOT /usr/include/eigen3
-ENV PYTHIA8DIR /usr/local/pythia8235
-ENV PYTHIA8_ROOT_DIR /usr/local/pythia8235
+ENV PYTHIA8DIR /usr/local/pythia8245
+ENV PYTHIA8_ROOT_DIR /usr/local/pythia8245
 ENV PATH $PATH:$PYTHIA8DIR/bin
 
 # Build heppy (various HEP tools via python)
@@ -100,8 +101,9 @@ RUN git clone https://github.com/matplo/heppy.git \
 && ./cpptools/build.sh
 
 # Install environment modules
-RUN curl -SL https://sourceforge.net/projects/modules/files/Modules/modules-4.5.1/modules-4.5.1.tar.gz \
-| tar -xvzC /usr/local \
+RUN wget -P /usr/local/ https://sourceforge.net/projects/modules/files/Modules/modules-4.5.1/modules-4.5.1.tar.gz \
+&& cd /usr/local \
+&& tar xvfz /usr/local/modules-4.5.1.tar.gz \
 && cd /usr/local/modules-4.5.1 \
 && ./configure --prefix=/usr/local --modulefilesdir=/heppy/modules \
 && make -j8 \

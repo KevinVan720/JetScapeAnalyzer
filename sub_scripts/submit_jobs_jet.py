@@ -42,11 +42,11 @@ def run_analysis(inputDir, OutputDir, suffix, batch):
     subFile.writelines(
         "singularity run -B "
         + inputDir
-        + ":/home/input/,"
+        + ":/home/input/"+suffix+","
         + OutputDir
         + ":/home/output/"
         + " "+homeDir+"Analysis/jetscape_analysis_latest.sif"
-        + " bash /home/output/work_hadronize.sh "
+        + " bash /home/output/work_jet.sh "
         + str(batch)
         + " "
         + suffix
@@ -73,5 +73,5 @@ for batch in batchIndex:
     os.makedirs(jobFolder, exist_ok=True)
 
     run_analysis(dir_name, jobFolder+"/light/", "light", batch)
-    run_analysis(dir_name, jobFolder+"/D/",  "D", batch)
-    run_analysis(dir_name, jobFolder+"/DB/", "DB", batch)
+    #run_analysis(dir_name, jobFolder+"/D/",  "D", batch)
+    #run_analysis(dir_name, jobFolder+"/DB/", "DB", batch)

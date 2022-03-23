@@ -46,7 +46,7 @@ def run_analysis(inputDir, OutputDir, suffix, batch):
         + OutputDir
         + ":/home/output/"
         + " "+homeDir+"Analysis/jetscape_analysis_latest.sif"
-        + " bash /home/output/work_hadronize.sh "
+        + " bash /home/output/work_heavy_jet.sh "
         + str(batch)
         + " "
         + suffix
@@ -72,6 +72,6 @@ for batch in batchIndex:
     jobFolder = baseDir+"RUN_"+str(batch)+"/"
     os.makedirs(jobFolder, exist_ok=True)
 
-    run_analysis(dir_name, jobFolder+"/light/", "light", batch)
+    #run_analysis(dir_name, jobFolder+"/light/", "light", batch)
     run_analysis(dir_name, jobFolder+"/D/",  "D", batch)
     #run_analysis(dir_name, jobFolder+"/DB/", "DB", batch)
