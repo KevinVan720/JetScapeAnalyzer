@@ -42,14 +42,12 @@ def run_analysis(inputDir, OutputDir, suffix, batch):
     subFile.writelines(
         "singularity run -B "
         + inputDir
-        + ":/home/input/"+suffix+","
+        + ":/home/input/,"
         + OutputDir
         + ":/home/output/"
         + " "+homeDir+"Analysis/jetscape_analysis_latest.sif"
         + " bash /home/output/work_jet.sh "
         + str(batch)
-        + " "
-        + suffix
         + " 1> "+OutputDir+"RUN_"
         + str(batch)
         + ".log 2> "+OutputDir+"RUN_"
