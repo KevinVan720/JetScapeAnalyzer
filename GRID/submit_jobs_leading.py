@@ -22,7 +22,7 @@ batchIndex = range(0, 100, 10)
 queueType = "primary"
 
 
-def run_analysis(inputDir, OutputDir, suffix, batch):
+def run_analysis(inputDir, OutputDir, batch):
     os.makedirs(OutputDir, exist_ok=True)
     os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/*.py " + OutputDir)
     os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/work*.sh " + OutputDir)
@@ -70,6 +70,6 @@ for batch in batchIndex:
     jobFolder = baseDir+"RUN_"+str(batch)+"/"
     os.makedirs(jobFolder, exist_ok=True)
 
-    run_analysis(dir_name, jobFolder+"/light/", "light", batch)
-    run_analysis(dir_name, jobFolder+"/D/",  "D", batch)
+    run_analysis(dir_name+"/light/", jobFolder+"/light/", batch)
+    run_analysis(dir_name+"/D/", jobFolder+"/D/", batch)
     #run_analysis(dir_name, jobFolder+"/DB/", "DB", batch)
