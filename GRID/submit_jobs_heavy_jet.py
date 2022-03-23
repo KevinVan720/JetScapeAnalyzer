@@ -25,7 +25,7 @@ queueType = "primary"
 def run_analysis(inputDir, OutputDir, batch):
     os.makedirs(OutputDir, exist_ok=True)
     os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/*.py " + OutputDir)
-    os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/work*.sh " + OutputDir)
+    os.system("cp "+homeDir+"Analysis/JetScapeAnalyzerGRID/work*.sh " + OutputDir)
 
     subFileName = OutputDir+"sub_job" + ".sh"
     subFile = open(subFileName, "w")
