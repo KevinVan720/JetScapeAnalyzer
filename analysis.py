@@ -859,13 +859,13 @@ class HeavyRadialProfileAnalysis(JetShapeAnalysis):
 
         for jet in jets_selected:
             #constituents = jet.constituents()
-            for hadron in fjHadrons:
-                dr = np.sqrt((hadron.eta()-jet.eta())**2 +
-                             (hadron.phi()-jet.phi())**2)
-                if hadron.user_index() in self.ids \
-                        and withinInterval(hadron.pt(), self.heavypTCut) \
-                        and withinInterval(hadron.eta(), self.heavyEtaCut) \
-                        and withinInterval(hadron.rap(), self.heavyRapidityCut):
+            for hadron in particles:
+                dr = np.sqrt((hadron.eta-jet.eta())**2 +
+                             (hadron.phi-jet.phi())**2)
+                if hadron.pid in self.ids \
+                        and withinInterval(hadron.pT, self.heavypTCut) \
+                        and withinInterval(hadron.eta, self.heavyEtaCut) \
+                        and withinInterval(hadron.rap, self.heavyRapidityCut):
                     i = findIndex(self.rBins, dr)
                     if i >= 0:
                         self.countStorage[self.pThatIndex][i] += 1

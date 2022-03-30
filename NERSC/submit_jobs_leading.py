@@ -11,42 +11,46 @@ import re
 from itertools import groupby
 import time
 
-homeDir = "/tier2/home/groups/jetscape/gy8046/"
+homeDir = "/global/cscratch1/sd/wf39/"
 
 baseDir = str(pathlib.Path(__file__).parent.absolute())+"/"
 
-dir_name = baseDir.replace("/Analysis", "")+"OutputFiles/"
+dir_name = baseDir.replace("/Analysis", "/Simulation")+"OutputFiles/"
 
 batchIndex = range(0, 100, 10)
 
-queueType = "primary"
+queueType = "regular"
 
 
 def run_analysis(inputDir, OutputDir, batch):
     os.makedirs(OutputDir, exist_ok=True)
-    os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/*.py " + OutputDir)
-    os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/GRID/work*.sh " + OutputDir)
+    #os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/*.py " + OutputDir)
+    #os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/GRID/work*.sh " + OutputDir)
 
     subFileName = OutputDir+"sub_job" + ".sh"
     subFile = open(subFileName, "w")
     subFile.writelines("#!/usr/bin/env bash\n")
     subFile.writelines("#SBATCH -q "+queueType+"\n")
     subFile.writelines("#SBATCH --mem=4GB\n")
-    subFile.writelines("#SBATCH -n 10\n")
+
+
+    subFile.writelines("#SBATCH --constraint=knl\n")
+    subFile.writelines("#SBATCH -N 1\n")
+    subFile.writelines("#SBATCH --license cscratch1")
 
     subFile.writelines("#SBATCH --job-name=folder_" + str(batch) + "\n")
     subFile.writelines("#SBATCH -e folder_" + str(batch) + ".err\n")
     subFile.writelines("#SBATCH -o folder_" + str(batch) + ".log\n")
-    subFile.writelines("#SBATCH --time 100:00:00\n")
+    subFile.writelines("#SBATCH --time 36:00:00\n")
+
+    subFile.writelines("#SBATCH --image=docker:wenkaifan/jetscape_analyzer:latest\n")
 
     subFile.writelines(
-        "singularity run -B "
+        "srun -n 10 shifter work_leading.sh "
         + inputDir
-        + ":/home/input/,"
+        + " "
         + OutputDir
-        + ":/home/output/"
-        + " "+homeDir+"Analysis/jetscape_analysis_latest.sif"
-        + " bash /home/output/work_heavy_jet.sh "
+        + " "
         + str(batch)
         + " 1> "+OutputDir+"RUN_"
         + str(batch)
@@ -70,5 +74,6 @@ for batch in batchIndex:
     jobFolder = baseDir+"RUN_"+str(batch)+"/"
     os.makedirs(jobFolder, exist_ok=True)
 
-    run_analysis(dir_name+"/D/", jobFolder+"/D/", batch)
+    run_analysis(dir_name, jobFolder, batch)
+    #run_analysis(dir_name+"/D/", jobFolder+"/D/", batch)
     #run_analysis(dir_name, jobFolder+"/DB/", "DB", batch)
