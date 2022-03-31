@@ -865,7 +865,7 @@ class HeavyRadialProfileAnalysis(JetShapeAnalysis):
                 if hadron.pid in self.ids \
                         and withinInterval(hadron.pT, self.heavypTCut) \
                         and withinInterval(hadron.eta, self.heavyEtaCut) \
-                        and withinInterval(hadron.rap, self.heavyRapidityCut):
+                        and withinInterval(hadron.y, self.heavyRapidityCut):
                     i = findIndex(self.rBins, dr)
                     if i >= 0:
                         self.countStorage[self.pThatIndex][i] += 1
