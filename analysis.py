@@ -820,21 +820,21 @@ class HeavyJetpTYieldAnalysis(JetAnalysisBase, pTYieldAnalysis):
         jets = fj.sorted_by_pt(cs.inclusive_jets())
         jets_selected = self.jetSelector(jets)
 
-        fjHadrons = [hadron for hadron in fjHadrons if loadParticleInfo(hadron.user_index())[0] in self.ids
+        heavyHadrons = [hadron for hadron in fjHadrons if loadParticleInfo(hadron.user_index())[0] in self.ids
                      and withinInterval(hadron.pt(), self.heavypTCut)
                      and withinInterval(hadron.eta(), self.heavyEtaCut)
                      and withinInterval(hadron.rap(), self.heavyRapidityCut)]
 
         for jet in jets_selected:
             jetpT=jet.pt()
-            constituents = jet.constituents()
+        
             for hole in holes:
                 dr = np.sqrt((hole.eta-jet.eta())**2 +
                              (hole.phi-jet.phi())**2)
                 if dr<=self.jetRadius:
                     jetpT-=hole.pT
 
-            for hadron in fjHadrons:
+            for hadron in heavyHadrons:
                 dr = np.sqrt((hadron.eta()-jet.eta())**2 +
                              (hadron.phi()-jet.phi())**2)
                 if dr < self.drCut:
@@ -865,11 +865,11 @@ class HeavyRadialProfileAnalysis(JetShapeAnalysis):
                 if hadron.pid in self.ids \
                         and withinInterval(hadron.pT, self.heavypTCut) \
                         and withinInterval(hadron.eta, self.heavyEtaCut) \
-                        and withinInterval(hadron.rap, self.heavyRapidityCut):
+                        and withinInterval(hadron.y, self.heavyRapidityCut):
                     i = findIndex(self.rBins, dr)
                     if i >= 0:
                         self.countStorage[self.pThatIndex][i] += 1
-                        break
+                
 
 
 class FlowAnalysis(pTYieldAnalysis):

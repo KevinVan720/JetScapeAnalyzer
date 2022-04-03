@@ -26,8 +26,8 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
 
 
     allAnalysis = [        
-        HeavyJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[40, 60, 80, 100, 120, 140, 160, 180, 200, 240, 280, 320, 360],
-                               jetRadius=0.3, jetEtaCut=[-2.1, 2.1], drCut=0.3, heavypTCut=[5, 30000], ids=DmesonIds, outputFileName=outputDir+"DJet_yield"),
+        HeavyJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[5, 10, 15,20, 30, 40, 60, 80, 100, 120, 140, 160, 180, 200, 240, 280, 320, 360],
+                               jetRadius=0.3, jetEtaCut=[-2.1, 2.1], drCut=0.3, heavypTCut=[3,36], ids=DmesonIds, outputFileName=outputDir+"DJet_yield"),
         HeavyRadialProfileAnalysis(pThatBins=pThatPair, rBins=[0, 0.05, 0.1, 0.3, 0.5], jetRadius=0.3, jetpTMin=60, jetEtaCut=[-1.6, 1.6], heavypTCut=[20, 30000], heavyEtaCut=[-2, 2], ids=[-421, 421],
                                    outputFileName=outputDir+"D0_jet_radialprofile"),
         HeavyRadialProfileAnalysis(pThatBins=pThatPair, rBins=[0, 0.05, 0.1, 0.3, 0.5], jetRadius=0.3, jetpTMin=60, jetEtaCut=[-1.6, 1.6], heavypTCut=[4, 20], heavyEtaCut=[-2, 2], ids=[-421, 421],

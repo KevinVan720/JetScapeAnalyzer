@@ -25,7 +25,6 @@ queueType = "regular"
 def run_analysis(inputDir, OutputDir, batch):
     os.makedirs(OutputDir, exist_ok=True)
     #os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/*.py " + OutputDir)
-    
     os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/NERSC/work*.sh " + OutputDir)
 
     subFileName = OutputDir+"sub_job" + ".sh"
