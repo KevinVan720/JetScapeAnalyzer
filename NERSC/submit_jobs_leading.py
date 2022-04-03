@@ -25,7 +25,8 @@ queueType = "regular"
 def run_analysis(inputDir, OutputDir, batch):
     os.makedirs(OutputDir, exist_ok=True)
     #os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/*.py " + OutputDir)
-    #os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/GRID/work*.sh " + OutputDir)
+    
+    os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/NERSC/work*.sh " + OutputDir)
 
     subFileName = OutputDir+"sub_job" + ".sh"
     subFile = open(subFileName, "w")
@@ -46,7 +47,7 @@ def run_analysis(inputDir, OutputDir, batch):
     subFile.writelines("#SBATCH --image=docker:wenkaifan/jetscape_analyzer:latest\n")
 
     subFile.writelines(
-        "srun -n 10 shifter work_leading.sh "
+        "srun -n 10 shifter "+OutputDir+"/work_leading.sh "
         + inputDir
         + " "
         + OutputDir
