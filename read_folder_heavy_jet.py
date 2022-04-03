@@ -46,7 +46,7 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
             files = [
                 file for file in allFiles if batchString in file and pThatString in file]
             headerFiles= [
-                headerFile for headerFile in allHeaderFiles if batchString in headerFile and pThatString in headerFile]
+                headerFile for headerFile in allHeaderFiles if pThatString in headerFile]
             for fileName in files:
 
                 # reading a certain file, add one event number as we encounter line starting with #
