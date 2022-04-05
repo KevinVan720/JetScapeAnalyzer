@@ -17,7 +17,7 @@ baseDir = str(pathlib.Path(__file__).parent.absolute())+"/"
 
 dir_name = baseDir.replace("/Analysis", "/Simulation")+"OutputFiles/"
 
-batchIndex = range(0, 100, 10)
+batchIndex = range(0, 10, 10)
 
 queueType = "regular"
 
@@ -41,7 +41,7 @@ def run_analysis(inputDir, OutputDir, batch):
     subFile.writelines("#SBATCH --job-name=folder_" + str(batch) + "\n")
     subFile.writelines("#SBATCH -e folder_" + str(batch) + ".err\n")
     subFile.writelines("#SBATCH -o folder_" + str(batch) + ".log\n")
-    subFile.writelines("#SBATCH --time 36:00:00\n")
+    subFile.writelines("#SBATCH --time 2:00:00\n")
 
     subFile.writelines("#SBATCH --image=docker:wenkaifan/jetscape_analyzer:latest\n")
 

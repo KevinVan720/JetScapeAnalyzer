@@ -114,13 +114,13 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
         #                            jetRadius=0.2, jetpTMin=1, jetRapidityCut=[-2.8, 2.8],
         #                            outputFileName=outputDir+"inclusiveJet_yield"),
 
-        InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[100,112,125,141,158,177,199,223,251,281,316,354,398,501,630,999],
-                                    jetRadius=0.3, jetpTMin=1, jetRapidityCut=[-2.8, 2.8],
-                                    outputFileName=outputDir+"inclusiveJet_yield"),
+        #InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[100,112,125,141,158,177,199,223,251,281,316,354,398,501,630,999],
+         #                           jetRadius=0.3, jetpTMin=1, jetRapidityCut=[-2.8, 2.8],
+         #                           outputFileName=outputDir+"inclusiveJet_yield"),
 
-        InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[100,112,125,141,158,177,199,223,251,281,316,354,398,501,630,999],
-                                    jetRadius=0.4, jetpTMin=1, jetRapidityCut=[-2.8, 2.8],
-                                    outputFileName=outputDir+"inclusiveJet_yield"),
+        #InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[100,112,125,141,158,177,199,223,251,281,316,354,398,501,630,999],
+        #                            jetRadius=0.4, jetpTMin=1, jetRapidityCut=[-2.8, 2.8],
+        #                            outputFileName=outputDir+"inclusiveJet_yield"),
         
         #InclusiveJetpTYieldAnalysis(pThatBins=pThatPair, pTBins=[100,112,125,141,158,177,199,223,251,281,316,354,398,501,630,999],
         #                            jetRadius=0.5, jetpTMin=1, jetRapidityCut=[-2.8, 2.8],
@@ -137,12 +137,12 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
         #JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[0.00794328,0.01,0.0125893,0.158489,0.199526,0.0251189,0.0316228,0.0398107,0.0501187,0.0630957,0.0794328,0.1,0.125893,0.158489,0.199526,0.251189,0.316228,0.398107,0.501187,0.630958,0.794329,1],
         #usepT=False,jetRadius=0.4,jetpTMin=316,jetpTMax=398,jetRapidityCut=[-2.1, 2.1],outputFileName=outputDir+"fragmentation_function"),
 
-        JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[0.00794328,0.01,0.0125893,0.158489,0.199526,0.0251189,0.0316228,0.0398107,0.0501187,0.0630957,0.0794328,0.1,0.125893,0.158489,0.199526,0.251189,0.316228,0.398107,0.501187,0.630958,0.794329,1],
-        usepT=False,jetRadius=0.4,jetpTMin=126,jetpTMax=158,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
-        JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[0.00794328,0.01,0.0125893,0.158489,0.199526,0.0251189,0.0316228,0.0398107,0.0501187,0.0630957,0.0794328,0.1,0.125893,0.158489,0.199526,0.251189,0.316228,0.398107,0.501187,0.630958,0.794329,1],
-        usepT=False,jetRadius=0.4,jetpTMin=158,jetpTMax=200,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
-        JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[0.00794328,0.01,0.0125893,0.158489,0.199526,0.0251189,0.0316228,0.0398107,0.0501187,0.0630957,0.0794328,0.1,0.125893,0.158489,0.199526,0.251189,0.316228,0.398107,0.501187,0.630958,0.794329,1],
-        usepT=False,jetRadius=0.4,jetpTMin=200,jetpTMax=251,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
+        #JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[0.00794328,0.01,0.0125893,0.158489,0.199526,0.0251189,0.0316228,0.0398107,0.0501187,0.0630957,0.0794328,0.1,0.125893,0.158489,0.199526,0.251189,0.316228,0.398107,0.501187,0.630958,0.794329,1],
+        #usepT=False,jetRadius=0.4,jetpTMin=126,jetpTMax=158,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
+        #JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[0.00794328,0.01,0.0125893,0.158489,0.199526,0.0251189,0.0316228,0.0398107,0.0501187,0.0630957,0.0794328,0.1,0.125893,0.158489,0.199526,0.251189,0.316228,0.398107,0.501187,0.630958,0.794329,1],
+        #usepT=False,jetRadius=0.4,jetpTMin=158,jetpTMax=200,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
+        #JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[0.00794328,0.01,0.0125893,0.158489,0.199526,0.0251189,0.0316228,0.0398107,0.0501187,0.0630957,0.0794328,0.1,0.125893,0.158489,0.199526,0.251189,0.316228,0.398107,0.501187,0.630958,0.794329,1],
+        #usepT=False,jetRadius=0.4,jetpTMin=200,jetpTMax=251,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
         #JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[0.00794328,0.01,0.0125893,0.158489,0.199526,0.0251189,0.0316228,0.0398107,0.0501187,0.0630957,0.0794328,0.1,0.125893,0.158489,0.199526,0.251189,0.316228,0.398107,0.501187,0.630958,0.794329,1],
         #usepT=False,jetRadius=0.4,jetpTMin=251,jetpTMax=316,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
         #JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[0.00794328,0.01,0.0125893,0.158489,0.199526,0.0251189,0.0316228,0.0398107,0.0501187,0.0630957,0.0794328,0.1,0.125893,0.158489,0.199526,0.251189,0.316228,0.398107,0.501187,0.630958,0.794329,1],
@@ -159,12 +159,12 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
         #JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[1,1.3318,1.7758,2.3677,3.1569,4.2092,5.6123,7.4831,9.9775,13.3033,17.7377,23.6503,31.5337,42.0449,56.0599,74.7466,99.6621],
         #usepT=True,jetRadius=0.4,jetpTMin=316,jetpTMax=398,jetRapidityCut=[-2.1, 2.1],outputFileName=outputDir+"fragmentation_function"),
 
-        JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[1,1.3318,1.7758,2.3677,3.1569,4.2092,5.6123,7.4831,9.9775,13.3033,17.7377,23.6503,31.5337,42.0449,56.0599,74.7466,99.6621],
-        usepT=True,jetRadius=0.4,jetpTMin=126,jetpTMax=158,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
-        JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[1,1.3318,1.7758,2.3677,3.1569,4.2092,5.6123,7.4831,9.9775,13.3033,17.7377,23.6503,31.5337,42.0449,56.0599,74.7466,99.6621],
-        usepT=True,jetRadius=0.4,jetpTMin=158,jetpTMax=200,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
-        JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[1,1.3318,1.7758,2.3677,3.1569,4.2092,5.6123,7.4831,9.9775,13.3033,17.7377,23.6503,31.5337,42.0449,56.0599,74.7466,99.6621],
-        usepT=True,jetRadius=0.4,jetpTMin=200,jetpTMax=251,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
+        #JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[1,1.3318,1.7758,2.3677,3.1569,4.2092,5.6123,7.4831,9.9775,13.3033,17.7377,23.6503,31.5337,42.0449,56.0599,74.7466,99.6621],
+        #usepT=True,jetRadius=0.4,jetpTMin=126,jetpTMax=158,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
+        #JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[1,1.3318,1.7758,2.3677,3.1569,4.2092,5.6123,7.4831,9.9775,13.3033,17.7377,23.6503,31.5337,42.0449,56.0599,74.7466,99.6621],
+        #usepT=True,jetRadius=0.4,jetpTMin=158,jetpTMax=200,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
+        #JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[1,1.3318,1.7758,2.3677,3.1569,4.2092,5.6123,7.4831,9.9775,13.3033,17.7377,23.6503,31.5337,42.0449,56.0599,74.7466,99.6621],
+        #usepT=True,jetRadius=0.4,jetpTMin=200,jetpTMax=251,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
         #JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[1,1.3318,1.7758,2.3677,3.1569,4.2092,5.6123,7.4831,9.9775,13.3033,17.7377,23.6503,31.5337,42.0449,56.0599,74.7466,99.6621],
         #usepT=True,jetRadius=0.4,jetpTMin=251,jetpTMax=316,jetRapidityCut=[-0.3, 0.3],outputFileName=outputDir+"fragmentation_function"),
         #JetFragmentationFunctionAnalysis(pThatBins=pThatPair,bins=[1,1.3318,1.7758,2.3677,3.1569,4.2092,5.6123,7.4831,9.9775,13.3033,17.7377,23.6503,31.5337,42.0449,56.0599,74.7466,99.6621],
@@ -191,6 +191,7 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
             headerFiles= [
                 headerFile for headerFile in allHeaderFiles if pThatString in headerFile]
             for fileName in files:
+                print(fileName)
 
                 # reading a certain file, add one event number as we encounter line starting with #
                 reader = JetScapeReader(inputDir+"/"+fileName, headerName=inputDir+"/"+headerFiles[0])
