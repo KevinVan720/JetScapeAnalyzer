@@ -19,7 +19,7 @@ dir_name = baseDir.replace("/Analysis", "/Simulation")+"OutputFiles/"
 
 batchIndex = range(0, 10, 10)
 
-queueType = "regular"
+queueType = "premium"
 
 
 def run_analysis(inputDir, OutputDir, batch):
@@ -46,7 +46,7 @@ def run_analysis(inputDir, OutputDir, batch):
     subFile.writelines("#SBATCH --image=docker:wenkaifan/jetscape_analyzer:latest\n")
 
     subFile.writelines(
-        "srun -n 10 shifter "+OutputDir+"/work_leading.sh "
+        "srun shifter "+OutputDir+"/work_leading.sh "
         + inputDir
         + " "
         + OutputDir
