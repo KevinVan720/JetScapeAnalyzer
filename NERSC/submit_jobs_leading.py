@@ -19,7 +19,7 @@ dir_name = baseDir.replace("/Analysis", "/Simulation")+"OutputFiles/"
 
 batchIndex = range(0, 10, 10)
 
-queueType = "premium"
+queueType = "regular"
 
 
 def run_analysis(inputDir, OutputDir, batch):
@@ -34,7 +34,7 @@ def run_analysis(inputDir, OutputDir, batch):
     subFile.writelines("#SBATCH --mem=4GB\n")
 
 
-    subFile.writelines("#SBATCH --constraint=knl\n")
+    subFile.writelines("#SBATCH --constraint=haswell\n")
     subFile.writelines("#SBATCH -N 1\n")
     subFile.writelines("#SBATCH --license cscratch1")
 
