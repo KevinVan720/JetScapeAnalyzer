@@ -25,7 +25,7 @@ for batch in batchIndex:
     jobFolder=baseDir+"RUN_"+str(batch)+"/"
     os.makedirs(jobFolder, exist_ok=True)
     os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/*.py "+ jobFolder) 
-    os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/work.sh "+ jobFolder)
+    os.system("cp "+homeDir+"Analysis/JetScapeAnalyzer/GRID/work.sh "+ jobFolder)
     
     subFileName = jobFolder+"sub_job" + ".sh"
     subFile = open(subFileName, "w")
