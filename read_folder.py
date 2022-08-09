@@ -32,45 +32,6 @@ def doAnalysisOnBatch(batchIndexStart, batchIndexEnd):
                         ids={421, -421}, rapidityCut=[-1, 1], outputFileName=outputDir+"D0_yield"),
         pTYieldAnalysis(pThatBins=pThatPair, pTBins=[2, 3, 4, 5, 6, 8, 10, 12.5, 15, 20, 25, 30, 40, 60, 100, 150, 200, 250, 300, 350, 400, 500],
                         ids=DmesonIds, rapidityCut=[-1, 1], outputFileName=outputDir+"D_yield"),
-
-        #CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        #pTCut1=[10,15],pTCut2=[8,12],ids1={421,-421},ids2={421,-421},useAnti=True, outputFileName=outputDir+"D0D0bar_correlation"),
-        #CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        #pTCut1=[4,6],pTCut2=[2,5],ids1={421,-421},ids2={421,-421},useAnti=True, outputFileName=outputDir+"D0D0bar_correlation"),
-
-
-        #CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        #pTCut1=[10,15],pTCut2=[8,12],ids1=DmesonIds,ids2=DmesonIds,useAnti=True, outputFileName=outputDir+"DDbar_correlation"),
-        #CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        #pTCut1=[4,6],pTCut2=[2,5],ids1=DmesonIds,ids2=DmesonIds,useAnti=True, outputFileName=outputDir+"DDbar_correlation"),
-        #CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        #pTCut1=[10,15],pTCut2=[2,5],ids1=DmesonIds,ids2=DmesonIds,useAnti=True, outputFileName=outputDir+"DDbar_correlation"),
-        #CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        #pTCut1=[8,12],pTCut2=[4,6],ids1=DmesonIds,ids2=DmesonIds,useAnti=True, outputFileName=outputDir+"DDbar_correlation"),
-        
-        #CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        #pTCut1=[4,8],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1={421,-421},ids2={22,-22}, outputFileName=outputDir+"D0photon_correlation"),
-
-        #CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        #pTCut1=[4,8],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1=DmesonIds,ids2={22,-22}, outputFileName=outputDir+"Dphoton_correlation"),
-        
-        #CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        #pTCut1=[2,4],pTCut2=[10,15],etaCut1=[-4,4],etaCut2=[-2,2],ids1=DmesonIds,ids2={22,-22}, outputFileName=outputDir+"Dphoton_correlation"),
-        
-        #CorrelationYieldAnalysis(pThatBins=pThatPair, etaBins=list([-4+0.1*x for x in range(81)]), phiBins=list([-3.2+0.1*x for x in range(65)]),
-        #pTCut1=[2,4],pTCut2=[4,8],etaCut1=[-4,4],etaCut2=[-2,2],ids1=DmesonIds,ids2={22,-22}, outputFileName=outputDir+"Dphoton_correlation"),
-
-        #MomentumFractionAnalysis(pThatBins=pThatPair, pTFractionBins=list([0.1*x for x in range(101)]),
-        #pTCut1=[10,15],pTCut2=[0,10000],ids2=DmesonIds,ids1={22,-22}, outputFileName=outputDir+"Dphoton_momentumFraction"),
-        
-        #MomentumFractionAnalysis(pThatBins=pThatPair, pTFractionBins=list([0.1*x for x in range(101)]),
-        #pTCut1=[4,8],pTCut2=[0,10000],ids2=DmesonIds,ids1={22,-22}, outputFileName=outputDir+"Dphoton_momentumFraction"),
-
-        #MomentumFractionAnalysis(pThatBins=pThatPair, pTFractionBins=list([0.1*x for x in range(101)]),
-        #pTCut1=[10,15],pTCut2=[0,10000],ids2=DmesonIds,ids1={22,-22},deltaPhiCut=[4*math.pi/5,math.pi], outputFileName=outputDir+"Dphoton_momentumFraction"),
-        
-        #MomentumFractionAnalysis(pThatBins=pThatPair, pTFractionBins=list([0.1*x for x in range(101)]),
-        #pTCut1=[4,8],pTCut2=[0,10000],ids2=DmesonIds,ids1={22,-22},deltaPhiCut=[4*math.pi/5,math.pi], outputFileName=outputDir+"Dphoton_momentumFraction"),
     ]
 
     assert(batchIndexStart >= 0 and batchIndexStart < batchIndexEnd)
